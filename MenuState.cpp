@@ -8,7 +8,7 @@ MenuState::MenuState(sf::RenderWindow& window, sf::Font& font)
     titleText_.setFont(font_);
     titleText_.setCharacterSize(48);
     titleText_.setFillColor(sf::Color::White);
-    titleText_.setString("ARKANOID");
+    titleText_.setString("RoguelikeGame");
     
     sf::FloatRect bounds = titleText_.getLocalBounds();
     titleText_.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
