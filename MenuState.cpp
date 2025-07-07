@@ -19,9 +19,9 @@ void MenuState::handleInput(sf::Event& event)
 {
     if (isActive_ != StateScreen::Menu || menuItems_.empty()) return;
     
-    if (event.type == sf::Event::KeyPressed)
+    if (event.type == sf::Event::KeyPressed) 
     {
-        switch (event.key.code)
+        switch (event.key.code) 
         {
         case sf::Keyboard::Up:
             selectedIndex_ = (selectedIndex_ - 1 + menuItems_.size()) % menuItems_.size();

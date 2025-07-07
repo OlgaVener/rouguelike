@@ -15,10 +15,7 @@ namespace Math
 
 	// === Коллизии ===
 	// void checkCollisions();																						  // Общая проверка всех коллизий
-	void checkWallCollisions(const std::unique_ptr<Ball>& ball);												// Коллизия мяча со стенами
-	void checkPlatformCollision(const std::unique_ptr<Platform>& platform, const std::unique_ptr<Ball>& ball);	// Коллизия мяча с платформой
-	bool isBrickHitByBall(const std::unique_ptr<Brick>& brick, const std::unique_ptr<Ball>& ball);				// Коллизия мяча с кирпичами
-	void handleBrickCollisionResponse(const Brick& brick, const std::unique_ptr<Ball>& ball);					// Ответная реакция на столкновение с кирпичом
+
 
 																												// void checkBonusWithPlatformCollision();					// Коллизия бонусов с платформой
 }  // namespace Math
