@@ -4,7 +4,7 @@
 #include <functional>
 
 enum class StateScreen;
-
+	
 class MenuState
 {
 public:

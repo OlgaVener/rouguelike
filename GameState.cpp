@@ -176,7 +176,7 @@ void GameState::initMenu()
 
 	// Создаём MenuState, передавая window_ и font_
 	menuState_ = std::make_unique<MenuState>(*window_, font_);
-	menuState_->setBackground(textureManager.get("background"));
+	menuState_->setBackground(textureManager.GetTexture("background"));
 
 	// Добавляем пункты меню
 	menuState_->addMenuItem("TO BE DONE...", [this]() {tobedoneText(); });

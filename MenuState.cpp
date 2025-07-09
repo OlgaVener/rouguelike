@@ -24,7 +24,7 @@ void MenuState::handleInput(sf::Event& event)
         switch (event.key.code) 
         {
         case sf::Keyboard::Up:
-            selectedIndex_ = (selectedIndex_ - 1 + menuItems_.size()) % menuItems_.size();
+            selectedIndex_ = static_cast<int>((selectedIndex_ - 1 + menuItems_.size()) % menuItems_.size());
             updateSelection();
             break;
             

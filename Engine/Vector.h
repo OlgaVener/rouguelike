@@ -88,7 +88,7 @@ namespace Engine
     }
 
     // ѕсевдонимы типов
-    using Vector2f = Vector2D<float>;
+    using Vector2Df = Vector2D<float>;
     using Vector2i = Vector2D<int>;
     using Vector2u = Vector2D<unsigned int>;
 }
