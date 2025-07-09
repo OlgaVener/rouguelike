@@ -1,28 +1,73 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <memory>
 #include <vector>
+#include <algorithm>  // Added for std::remove_if
 #include "Component.h"
+#include "TransformComponent.h"
 
-namespace Engine {
-    class GameObject {
+namespace Engine
+{
+    class TransformComponent;
+
+    class GameObject
+    {
     public:
-        virtual ~GameObject() = default;
-        virtual void draw(sf::RenderWindow& window) const = 0;
-        virtual sf::FloatRect getBounds() const = 0;
-        virtual void update(float deltaTime) {}
+        GameObject();
+        ~GameObject();
+
+        void Update(float deltatime);
+        void Render();
 
         template <typename T>
-        T* GetComponent() {
-            for (auto& component : components) {
-                if (auto ptr = dynamic_cast<T*>(component.get())) {
-                    return ptr;
+        T* AddComponent()
+        {
+            if constexpr (!std::is_base_of<Component, T>::value)
+            {
+                std::cout << "T must be derived from Component." << std::endl;
+                return nullptr;
+            }
+            if constexpr (std::is_same<T, TransformComponent>::value)
+            {
+                if (GetComponent<TransformComponent>() != nullptr)
+                {
+                    std::cout << "Can't add Transform, because it will break the engine loop." << std::endl;
+                    return nullptr;
+                }
+            }
+
+            T* newComponent = new T(this);
+            components.push_back(newComponent);
+            std::cout << "Add new component: " << newComponent << std::endl;
+            return newComponent;
+        }
+
+        void RemoveComponent(Component* component)  // Fixed parameter name (was 'conponent')
+        {
+            components.erase(std::remove_if(components.begin(), components.end(),
+                [component](Component* obj) {
+                    return obj == component;
+                }),
+                components.end());
+            delete component;
+            std::cout << "Deleted component";
+        }
+
+        template <typename T>
+        T* GetComponent() const
+        {
+            for (const auto& component : components)
+            {
+                if (auto casted = dynamic_cast<T*>(component))
+                {
+                    return casted;
                 }
             }
             return nullptr;
         }
 
-    protected:
-        std::vector<std::unique_ptr<Component>> components;
+    private:
+        std::vector<Component*> components;
     };
 }

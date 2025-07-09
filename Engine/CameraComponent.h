@@ -1,26 +1,28 @@
 #pragma once
-
 #include <SFML/Graphics/RenderWindow.hpp>
+#include "Component.h"
 #include "TransformComponent.h"
 
 namespace Engine
 {
-	class CameraComponent : public Component
-	{
-	public:
-		CameraComponent(GameObject* gameObject);
-		~CameraComponent();
+    class GameObject; 
 
-		void Update(float deltaTime) override;
-		void Render() override;
+    class CameraComponent : public Component
+    {
+    public:
+        CameraComponent(GameObject* gameObject);
+        ~CameraComponent();
 
-		void SetWindow(sf::RenderWindow* newWindow);
-		void ZoomBy(float newZoom);
+        void Update(float deltaTime) override;
+        void Render() override;
 
-		void SetBaseResolution(int width, int height);
-	private:
-		TransformComponent* transform;
-		sf::RenderWindow* window;
-		sf::View* view;
-	};
+        void SetWindow(sf::RenderWindow* newWindow);
+        void ZoomBy(float newZoom);
+        void SetBaseResolution(int width, int height);
+
+    private:
+        TransformComponent* transform;
+        sf::RenderWindow* window;
+        sf::View* view;
+    };
 }
