@@ -4,7 +4,7 @@
 #include "SpriteRendererComponent.h"
 #include "RenderSystem.h"
 
-namespace Engine
+namespace GameEngine
 {
     SpriteRendererComponent::SpriteRendererComponent(GameObject* gameObject)
         : Component(gameObject),

@@ -160,9 +160,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DeveloperLevel.cpp" />
+    <ClCompile Include="GameMain.cpp" />
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="GameState.cpp" />
-    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>

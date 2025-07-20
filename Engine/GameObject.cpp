@@ -3,7 +3,7 @@
 #include "TransformComponent.h"
 
 
-namespace Engine 
+namespace GameEngine
 {
     GameObject::GameObject()
     {

@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
-namespace Engine
+namespace GameEngine
 {
 	class SpriteRendererComponent : public Component
 	{

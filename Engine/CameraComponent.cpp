@@ -3,7 +3,7 @@
 #include "TransformComponent.h"
 #include "GameObject.h" 
 
-namespace Engine
+namespace GameEngine
 {
 	CameraComponent::CameraComponent(GameObject* gameObject) : Component(gameObject)
 	{

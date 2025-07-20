@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "TransformComponent.h"
 
-namespace Engine
+namespace GameEngine
 {
 	TransformComponent::TransformComponent(GameObject* gameObject) : Component(gameObject) {}
 
@@ -34,6 +34,10 @@ namespace Engine
 	{
 		scale.x *= scaleOffset.x;
 		scale.y *= scaleOffset.y;
+	}
+	void TransformComponent::SetPosition(const Vector2Df& newPosition)
+	{
+		position = newPosition;
 	}
 	const Vector2Df TransformComponent::GetWorldPosition() const
 	{

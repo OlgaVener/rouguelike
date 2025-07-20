@@ -1,6 +1,6 @@
 #include "DeveloperLevel.h"
 
-using namespace Engine;
+using namespace GameEngine;
 
 namespace RoguelikeGame
 {

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ResourceSystem.h"
 
-namespace Engine
+namespace GameEngine
 {
 	ResourceSystem* ResourceSystem::Instance()
 	{

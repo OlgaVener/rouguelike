@@ -1,30 +1,30 @@
 #pragma once
+#include <vector>
 #include "GameObject.h"
 
-namespace Engine
+namespace GameEngine
 {
-	class GameWorld
-	{
-	public:
-		static GameWorld* Instance();
+    class GameWorld
+    {
+    public:
+        static GameWorld* Instance();
 
-		void Update(float deltaTime);
-		void Render();
-		void LateUpdate();
+        void Update(float deltaTime);
+        void Render();
+        void LateUpdate();
 
-		GameObject* CreateGameObject();
-		void DestroyGameObject(GameObject* gameObject);
-		void Clear();
-	private:
-		GameWorld() {}
-		~GameWorld() {}
 
-		GameWorld(GameWorld const&) = delete;
-		GameWorld& operator= (GameWorld const&) = delete;
+        GameObject* CreateGameObject();
+        void DestroyGameObject(GameObject* gameObject);
+        void Clear();
 
-		std::vector<GameObject*> gameObjects = {};
-		std::vector<GameObject*> markedToDestroyGameObjects = {};
+    private:
+        std::vector<GameObject*> gameObjects;
+        std::vector<GameObject*> markedToDestroyGameObjects;
 
-		void DestroyGameObjectImmediate(GameObject* gameObject);
-	};
+        void DestroyGameObjectImmediate(GameObject* gameObject);
+
+        GameWorld() = default;
+        ~GameWorld() = default;
+    };
 }

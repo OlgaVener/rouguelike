@@ -2,7 +2,7 @@
 #include "Component.h"
 #include <iostream>
 
-namespace Engine
+namespace GameEngine
 {
     Component::Component(GameObject* gameObject) : gameObject(gameObject) {}
     Component::~Component()

@@ -1,22 +1,23 @@
 #pragma once
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 
 #include "SFML/Graphics.hpp"
 
-namespace Engine
+namespace GameEngine
 {
-	class Engine
-	{
-	public:
-		Engine(const Engine& app) = delete;
-		Engine& operator= (const Engine&) = delete;
+    class Engine
+    {
+    public:
+        static Engine* Instance();
+        void Initialize();
+        void Run();
 
-		static Engine* Instance();
+        Engine();
+        ~Engine() = default;
 
-		void Run();
-
-	private:
-		Engine();
-		~Engine() = default;
-	};
+        Engine(const Engine&) = delete;
+        Engine& operator=(const Engine&) = delete;
+    };
 }

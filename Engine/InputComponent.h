@@ -3,7 +3,7 @@
 #include "Component.h"
 #include <SFML/Window.hpp>
 
-namespace Engine
+namespace GameEngine
 {
 	class InputComponent : public Component
 	{

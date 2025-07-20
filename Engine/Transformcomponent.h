@@ -4,7 +4,7 @@
 #include "Component.h"
 #include "Vector.h"
 
-namespace Engine {
+namespace GameEngine {
     class GameObject;  // Forward declaration
 
     class TransformComponent : public Component {
@@ -16,6 +16,7 @@ namespace Engine {
         void MoveBy(const Vector2Df& offset);
         void RotateBy(float offset);
         void ScaleBy(const Vector2Df& scaleOffset);
+        void SetPosition(const Vector2Df& newPosition);
 
         const Vector2Df GetWorldPosition() const;
         const float GetWorldRotation() const;

@@ -1,53 +1,51 @@
 #include "pch.h"
 #include "Engine.h"
-#include <iostream>
 #include "GameWorld.h"
 #include "RenderSystem.h"
 
-namespace Engine
+namespace GameEngine
 {
-	Engine* Engine::Instance()
-	{
-		static Engine instance;
-		return &instance;
-	}
+    Engine* Engine::Instance()
+    {
+        static Engine instance;
+        return &instance;
+    }
 
-	Engine::Engine()
-	{
-		unsigned int seed = (unsigned int)time(nullptr);
-		srand(seed);
-	}
+    Engine::Engine()
+    {
+        // Инициализация движка
+    }
 
-	void Engine::Run()
-	{
-		sf::Clock gameClock;
-		sf::Event event;
+    void Engine::Initialize()
+    {
+        // Дополнительная инициализация
+    }
 
-		while (RenderSystem::Instance()->GetMainWindow().isOpen())
-		{
-			sf::Time dt = gameClock.restart();
-			float deltaTime = dt.asSeconds();
+    void Engine::Run()
+    {
+        auto& window = RenderSystem::Instance()->GetMainWindow();
+        sf::Clock clock;
 
-			while (RenderSystem::Instance()->GetMainWindow().pollEvent(event))
-			{
-				if (event.type == sf::Event::Closed)
-				{
-					RenderSystem::Instance()->GetMainWindow().close();
-				}
-			}
+        while (window.isOpen())
+        {
+            // Обработка событий
+            sf::Event event;
+            while (window.pollEvent(event))
+            {
+                if (event.type == sf::Event::Closed)
+                    window.close();
+            }
 
-			if (!RenderSystem::Instance()->GetMainWindow().isOpen())
-			{
-				break;
-			}
+            // Очистка экрана черным цветом
+            window.clear(sf::Color::Black);
 
-			RenderSystem::Instance()->GetMainWindow().clear();
+            // Обновление игрового мира
+            float deltaTime = clock.restart().asSeconds();
+            GameWorld::Instance()->Update(deltaTime);
+            GameWorld::Instance()->Render();
 
-			GameWorld::Instance()->Update(deltaTime);
-			GameWorld::Instance()->Render();
-			GameWorld::Instance()->LateUpdate();
-
-			RenderSystem::Instance()->GetMainWindow().display();
-		}
-	}
+            // Отображение
+            window.display();
+        }
+    }
 }

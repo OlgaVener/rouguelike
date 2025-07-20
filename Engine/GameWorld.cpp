@@ -1,9 +1,10 @@
+#include "pch.h" 
 #include "GameWorld.h"
-#include "pch.h"
+#include <algorithm>
 
-namespace Engine
+namespace GameEngine
 {
-	GameWorld* Engine::GameWorld::Instance()
+	GameWorld* GameWorld::Instance()
 	{
 		static GameWorld world;
 		return &world;

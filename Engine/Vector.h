@@ -4,7 +4,7 @@
 #include <iostream> // для перегрузки оператора <<
 #include <algorithm> 
 
-namespace Engine 
+namespace GameEngine
 {
     // 2D Вектор
     template <typename T>

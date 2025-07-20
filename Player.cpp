@@ -1,25 +1,26 @@
 #include "Player.h"
-#include <ResourceSystem.h>
+#include "ResourceSystem.h"
 
 namespace RoguelikeGame
 {
-	Player::Player()
-	{
-		gameObject = Engine::GameWorld::Instance()->CreateGameObject();
-		auto playerRenderer = gameObject->AddComponent<Engine::SpriteRendererComponent>();
+    Player::Player()
+    {
+        gameObject = GameEngine::GameWorld::Instance()->CreateGameObject();
+        auto playerRenderer = gameObject->AddComponent<GameEngine::SpriteRendererComponent>();
 
-		playerRenderer->SetTexture(*Engine::ResourceSystem::Instance()->GetTextureShared("ball"));
-		playerRenderer->SetPixelSize(32, 32);
+        // «агружаем текстуру (убедитесь, что "ball" загружена в ResourceSystem)
+        playerRenderer->SetTexture(*GameEngine::ResourceSystem::Instance()->GetTextureShared("ball"));
+        playerRenderer->SetPixelSize(32, 32);
 
-		auto playerCamera = gameObject->AddComponent<Engine::CameraComponent>();
-		playerCamera->SetWindow(&Engine::RenderSystem::Instance()->GetMainWindow());
-		playerCamera->SetBaseResolution(1280, 720);
+        auto playerCamera = gameObject->AddComponent<GameEngine::CameraComponent>();
+        playerCamera->SetWindow(&GameEngine::RenderSystem::Instance()->GetMainWindow());
+        playerCamera->SetBaseResolution(1280, 720);
 
-		auto playerInput = gameObject->AddComponent<Engine::InputComponent>();
-	}
+        auto playerInput = gameObject->AddComponent<GameEngine::InputComponent>();
+    }
 
-	Engine::GameObject* Player::GetGameObject()
-	{
-		return gameObject;
-	}
+    GameEngine::GameObject* Player::GetGameObject()
+    {
+        return gameObject;
+    }
 }

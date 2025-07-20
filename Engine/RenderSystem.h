@@ -1,26 +1,18 @@
 #pragma once
-
 #include <SFML/Graphics.hpp>
 
-namespace Engine
+namespace GameEngine
 {
-	class RenderSystem
-	{
-	public:
-		static RenderSystem* Instance();
+    class RenderSystem
+    {
+    public:
+        static RenderSystem* Instance();
 
-		void SetMainWindow(sf::RenderWindow* newWindow);
-		sf::RenderWindow& GetMainWindow() const;
+        void SetMainWindow(sf::RenderWindow* newWindow);
+        sf::RenderWindow& GetMainWindow() const;
+        void Render(const sf::Drawable& drawable);
 
-		void Render(const sf::Drawable& drawable);
-
-	private:
-		sf::RenderWindow* window;
-
-		RenderSystem() {}
-		~RenderSystem() {}
-
-		RenderSystem(RenderSystem const&) = delete;
-		RenderSystem& operator= (RenderSystem const&) = delete;
-	};
+    private:
+        sf::RenderWindow* window = nullptr;  // явна€ инициализаци€
+    };
 }

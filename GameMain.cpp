@@ -8,5 +8,12 @@ using namespace RoguelikeGame;
 
 int main()
 {
-	Engine::RenderSystem::Instance()->SetMainWindow(new sf::RenderWindow(sf::VideoMode(1280, 720), "Roguelike"));
+	RenderSystem::Instance()->SetMainWindow(new sf::RenderWindow(sf::VideoMode(1280, 720), "Roguelike"));
+
+	ResourceSystem::Instance()->LoadTexture("ball", "Resources/Textures/ball.png");
+
+	auto developerLevel = std::make_shared<DeveloperLevel>();
+	developerLevel->Start();
+
+	Engine::Instance()->Run();
 }
