@@ -57,6 +57,69 @@ namespace GameEngine
 		return m;
 	}
 
+	Matrix2D Matrix2D::GetInversed() const
+	{
+		Matrix2D result;
+		float determinant = m[0][0] * m[1][1] * m[2][2]
+			- m[0][0] * m[1][2] * m[2][1]
+			- m[0][1] * m[1][0] * m[2][2]
+			+ m[0][1] * m[1][2] * m[2][0]
+			+ m[0][2] * m[1][0] * m[2][1]
+			- m[0][2] * m[1][1] * m[2][0];
+
+		float inversedDeterminant = 1.0f / determinant;
+
+		Matrix2D minor(0.f, 0.f, 0.f,
+						0.f, 0.f, 0.f,
+						0.f, 0.f, 0.f);
+
+		std::vector<std::vector<float>> submatrix(2, std::vector<float>(2));
+		int submatrixRow = 0;
+		int submatrixCol = 0;
+
+		for (int i = 0; i < 3; ++i)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				result.m[i][j] = inversedDeterminant * minor.m[j][i];
+			}
+		}
+
+		return result;
+
+		for (int row = 0; row < 3; ++row)
+		{
+			for (int column = 0; column < 3; ++column)
+			{
+				submatrixRow = 0;
+				submatrixCol = 0;
+
+				for (int i = 0; i < 3; ++i)
+				{
+					for (int j = 0; j < 3; ++j)
+					{
+						if (i != row && j != column)
+						{
+							submatrix[submatrixRow][submatrixCol] = m[i][j];
+							++submatrixCol;
+							if (submatrixCol == 2)
+							{
+								submatrixCol = 0;
+								++submatrixRow;
+							}
+						}
+					}
+				}
+
+				minor.m[row][column] = submatrix[0][0] * submatrix[1][1] - submatrix[0][1] * submatrix[1][0];
+				if ((row + column) % 2 == 1)
+				{
+					minor.m[row][column] = -minor.m[row][column];
+				}
+			}
+		}
+	}
+
 	void Matrix2D::Print() const
 	{
 		for (int row = 0; row < 3; ++row)
