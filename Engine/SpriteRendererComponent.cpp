@@ -6,16 +6,18 @@
 
 namespace GameEngine
 {
-    SpriteRendererComponent::SpriteRendererComponent(GameObject* gameObject)
-        : Component(gameObject),
-        sprite(new sf::Sprite()),
-        transform(nullptr)
+    template <typename T1, typename T2>
+    T1 Convert(const T2& vec)
     {
-        sprite->setScale(1.f, -1.f);
-        if (gameObject) 
-        {
-            transform = gameObject->template GetComponent<TransformComponent>();
-        }
+        return T1(vec.x, vec.y);
+    }
+
+    SpriteRendererComponent::SpriteRendererComponent(GameObject* gameObject) : Component(gameObject)
+    {
+        sprite = new sf::Sprite();
+        scale = { 1, -1 };
+        sprite->setScale({ 1, -1 });
+        transform = gameObject->GetComponent<TransformComponent>();
     }
 
     SpriteRendererComponent::~SpriteRendererComponent()
@@ -26,16 +28,6 @@ namespace GameEngine
         }
     }
 
-    void SpriteRendererComponent::Render()
-    {
-        if (sprite != nullptr && transform != nullptr)
-        {
-            auto pos = transform->GetWorldPosition();
-            sprite->setPosition(pos.x, pos.y);
-            sprite->setRotation(transform->GetWorldRotation());
-            RenderSystem::Instance()->Render(*sprite);
-        }
-    }
 
     void SpriteRendererComponent::Update(float deltaTime) 
     {
@@ -43,6 +35,19 @@ namespace GameEngine
         {
             auto pos = transform->GetWorldPosition();
             sprite->setPosition(pos.x, pos.y);
+        }
+    }
+
+    void SpriteRendererComponent::Render()
+    {
+        if (sprite != nullptr && transform != nullptr)
+        {
+            sprite->setPosition(Convert<sf::Vector2f, Vector2Df>(transform->GetWorldPosition()));
+            sprite->setRotation(transform->GetWorldRotation());
+
+            auto transformScale = Convert<sf::Vector2f, Vector2Df>(transform->GetWorldScale());
+            sprite->setScale({ scale.x * transformScale.x, scale.y * transformScale.y });
+            RenderSystem::Instance()->Render(*sprite);
         }
     }
 

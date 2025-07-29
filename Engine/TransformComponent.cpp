@@ -279,4 +279,36 @@ namespace GameEngine
 		std::cout << "World: (" << GetWorldScale().x << ", " << GetWorldScale().y << ")" << std::endl;
 		std::cout << "Local: (" << GetLocalScale().x << ", " << GetLocalScale().y << ")" << std::endl;
 	}
+	void TransformComponent::setWorldInfoFrom(const Matrix2D& transform) const
+	{
+		position.x = transform.GetMatrix()[0][2];
+		position.y = transform.GetMatrix()[1][2];
+
+		scale.x = std::sqrt(transform.GetMatrix()[0][0] * transform.GetMatrix()[0][0] + transform.GetMatrix()[1][0] * transform.GetMatrix()[1][0]);
+		scale.y = std::sqrt(transform.GetMatrix()[0][1] * transform.GetMatrix()[0][1] + transform.GetMatrix()[1][1] * transform.GetMatrix()[1][1]);
+
+		rotation = std::atan2(transform.GetMatrix()[0][1], transform.GetMatrix()[0][0]) * 180 / 3.14159265;
+	}
+	void TransformComponent::setLocalInfoFrom(const Matrix2D& transform) const
+	{
+		position.x = transform.GetMatrix()[0][2];
+		position.y = transform.GetMatrix()[1][2];
+
+		scale.x = std::sqrt(transform.GetMatrix()[0][0] * transform.GetMatrix()[0][0] + transform.GetMatrix()[1][0] * transform.GetMatrix()[1][0]);
+		scale.y = std::sqrt(transform.GetMatrix()[0][1] * transform.GetMatrix()[0][1] + transform.GetMatrix()[1][1] * transform.GetMatrix()[1][1]);
+
+		rotation = std::atan2(transform.GetMatrix()[0][1], transform.GetMatrix()[0][0]) * 180 / 3.14159265;
+	}
+	void TransformComponent::updateLocalTransform() const
+	{
+		if (!isUpdated)
+		{
+			localTransform = createTransform(localPosition, localRotation, localScale);
+			isUpdated = true;
+		}
+	}
+	void TransformComponent::updateLocalTransform(const Vector2Df& position, float rotation, const Vector2Df& scale) const
+	{
+
+	}
 }
