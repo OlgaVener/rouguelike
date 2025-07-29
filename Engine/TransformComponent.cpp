@@ -79,12 +79,6 @@ namespace GameEngine
 		isUpdated = false;
 	}
 
-	void TransformComponent::ScaleBy(const Vector2Df& scaleOffset)
-	{
-		scale.x *= scaleOffset.x;
-		scale.y *= scaleOffset.y;
-	}
-
 	void TransformComponent::SetWorldRotation(float angle)
 	{
 		if (parent == nullptr)
@@ -224,28 +218,37 @@ namespace GameEngine
 
 	void TransformComponent::SetParent(TransformComponent* newParent)
 	{
-		if (parent == nullptr && newParent != nullptr)
+		if (parent == newParent) return;
+
+		// Сначала обновляем трансформацию
+		if (newParent != nullptr)
 		{
-			newParent->gameObject->AddChild(gameObject);
-			localTransform = parent->GetWorldTransform().GetInversed() * localTransform;
+			Matrix2D newParentInverse = newParent->GetWorldTransform().GetInversed();
+			localTransform = newParentInverse * GetWorldTransform();
+			setLocalInfoFrom(localTransform);
 		}
-		else if (parent != nullptr && newParent == nullptr)
+		else if (parent != nullptr)
 		{
-			parent->gameObject->RemoveChild(gameObject);
 			localTransform = parent->GetWorldTransform() * localTransform;
-		}
-		else if (parent != nullptr && newParent != nullptr)
-		{
-			parent->gameObject->RemoveChild(gameObject);
-			newParent->gameObject->AddChild(gameObject);
-			localTransform = newParent->GetWorldTransform().GetInversed() * (parent->GetWorldTransform() * localTransform);
+			setLocalInfoFrom(localTransform);
 		}
 
-		setLocalInfoFrom(localTransform);
+		// Затем обновляем иерархию GameObject
+		if (parent != nullptr)
+		{
+			parent->gameObject->RemoveChild(gameObject);
+		}
 
 		parent = newParent;
+
+		if (parent != nullptr)
+		{
+			parent->gameObject->AddChild(gameObject);
+		}
+
 		isUpdated = false;
 	}
+
 	TransformComponent* TransformComponent::GetParent() const
 	{
 		return parent;
@@ -309,6 +312,35 @@ namespace GameEngine
 	}
 	void TransformComponent::updateLocalTransform(const Vector2Df& position, float rotation, const Vector2Df& scale) const
 	{
-
+		localPosition = position;
+		localRotation = rotation;
+		localScale = scale;
+		localTransform = createTransform(position, rotation, scale);
+		isUpdated = true;
 	}
+
+	Matrix2D TransformComponent::createTransform(const Vector2Df& position, float rotation, const Vector2Df& scale) const
+	{
+		Matrix2D transform;
+		float rad = rotation * 3.14159265f / 180.0f;
+		float cosRot = cos(rad);
+		float sinRot = sin(rad);
+
+		// Получаем ссылку на матрицу
+		auto& matrix = transform.GetMatrix();
+
+		// Заполняем матрицу трансформации
+		matrix[0][0] = scale.x * cosRot;
+		matrix[0][1] = scale.x * -sinRot;
+		matrix[1][0] = scale.y * sinRot;
+		matrix[1][1] = scale.y * cosRot;
+		matrix[0][2] = position.x;
+		matrix[1][2] = position.y;
+		matrix[2][0] = 0.0f;
+		matrix[2][1] = 0.0f;
+		matrix[2][2] = 1.0f;
+
+		return transform;
+	}
+
 }

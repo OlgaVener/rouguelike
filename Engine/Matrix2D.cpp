@@ -52,11 +52,6 @@ namespace GameEngine
 		return result;
 	}
 
-	const std::array<std::array<float, 3>, 3>& Matrix2D::GetMatrix() const
-	{
-		return m;
-	}
-
 	Matrix2D Matrix2D::GetInversed() const
 	{
 		Matrix2D result;

@@ -22,6 +22,7 @@ namespace GameEngine
 		void FlipX(bool flip);
 		void FlipY(bool flip);
 	private:
+		Vector2Df scale;
 		sf::Sprite* sprite;
 		TransformComponent* transform;
 

@@ -17,7 +17,8 @@ namespace GameEngine
 
 		Matrix2D operator*(const Matrix2D& other) const;
 
-		const std::array<std::array<float, 3>, 3>& GetMatrix() const;
+		std::array<std::array<float, 3>, 3>& GetMatrix() { return m; }
+		const std::array<std::array<float, 3>, 3>& GetMatrix() const { return m; }
 		Matrix2D GetInversed() const;
 		void Print() const;
 	private:

@@ -27,18 +27,32 @@ namespace GameEngine
         template <typename T>
         T* AddComponent()
         {
-            
+            T* newComponent = new T(this);
+            components.push_back(newComponent);
+            return newComponent;
         }
 
         void RemoveComponent(Component* component)
         {
-            
+            auto it = std::find(components.begin(), components.end(), component);
+            if (it != components.end())
+            {
+                delete* it;
+                components.erase(it);
+            }
         }
 
         template <typename T>
         T* GetComponent() const
         {
-            
+            for (const auto& component : components)
+            {
+                if (auto casted = dynamic_cast<T*>(component))
+                {
+                    return casted;
+                }
+            }
+            return nullptr;
         }
 
         template <typename T>
