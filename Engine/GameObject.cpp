@@ -59,6 +59,7 @@ namespace GameEngine
         {
             component->Render();
         }
+
     }
     void GameObject::AddChild(GameObject* child)
     {

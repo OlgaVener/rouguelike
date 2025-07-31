@@ -1,14 +1,11 @@
-#pragma once
-
-#include <SFML/Graphics.hpp>
-#include <vector>
-#include <functional>
 #include "Component.h"
+#include "GameObject.h"
 
-namespace GameEngine
+namespace GameEngine 
 {
-	class ColliderComponent
-	{
-
-	};
+    class ColliderComponent : public Component 
+    {
+    public:
+        ColliderComponent(GameObject* gameObject) : Component(gameObject) {}
+    };
 }

@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "ResourceSystem.h"
+#include "SpriteColliderComponent.h"
 
 namespace RoguelikeGame
 {
@@ -7,6 +8,8 @@ namespace RoguelikeGame
     {
         gameObject = GameEngine::GameWorld::Instance()->CreateGameObject();
         auto playerRenderer = gameObject->AddComponent<GameEngine::SpriteRendererComponent>();
+
+        auto collider = gameObject->AddComponent<GameEngine::SpriteColliderComponent>();
 
         // Загружаем текстуру
         playerRenderer->SetTexture(*GameEngine::ResourceSystem::Instance()->GetTextureShared("ball"));

@@ -3,19 +3,21 @@
 #include "ColliderComponent.h"
 #include "SpriteRendererComponent.h"
 #include "RenderSystem.h"
-#include <SFML/Graphics/Sprite.hpp>
+#include "GameObject.h"
+#include <SFML/Graphics/Rect.hpp>
 
 namespace GameEngine
 {
-	class SpriteColliderComponent : public ColliderComponent
-	{
-	public:
-		SpriteColliderComponent(GameObject* gameObject);
-		~SpriteColliderComponent();
+    class SpriteColliderComponent : public ColliderComponent
+    {
+    public:
+        SpriteColliderComponent(GameObject* gameObject);
+        ~SpriteColliderComponent();
 
-		void Update(float deltaTime);
-		void Render();
-	private:
-		const sf::Sprite* sprite;
-	};
+        void Update(float deltaTime) override;
+        void Render() override;
+
+    private:
+        sf::FloatRect bounds;
+    };
 }
