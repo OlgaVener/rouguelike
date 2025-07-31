@@ -13,6 +13,6 @@ namespace GameEngine
         void Render(const sf::Drawable& drawable);
 
     private:
-        sf::RenderWindow* window = nullptr;  // явна€ инициализаци€
+        sf::RenderWindow* window = nullptr;
     };
 }

@@ -1,7 +1,7 @@
 #pragma once
-#include <cmath> // для sqrt(), abs() и других математических функций
-#include <cfloat> // для FLT_EPSILON (проверка на ноль с плавающей точкой)
-#include <iostream> // для перегрузки оператора <<
+#include <cmath>
+#include <cfloat>
+#include <iostream>
 #include <algorithm> 
 
 namespace GameEngine
