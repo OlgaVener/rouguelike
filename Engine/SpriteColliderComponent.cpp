@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "SpriteColliderComponent.h"
+#include "PhysicsSystem.h"
 #include <iostream>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -13,10 +14,12 @@ SpriteColliderComponent::SpriteColliderComponent(GameObject* gameObject)
     if (!spriteRenderer || !spriteRenderer->GetSprite()) {
         std::cout << "[SpriteColliderComponent] Warning: SpriteRendererComponent with valid sprite is required.\n";
     }
+    PhysicsSystem::Instance()->Subscribe(this);
 }
 
 SpriteColliderComponent::~SpriteColliderComponent()
 {
+    PhysicsSystem::Instance()->Unsubscribe(this);
 }
 
 void SpriteColliderComponent::Update(float deltaTime)

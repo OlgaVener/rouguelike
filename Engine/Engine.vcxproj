@@ -172,6 +172,7 @@
     <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="ResourceSystem.h" />
+    <ClInclude Include="RigidbodyComponent.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SpriteColliderComponent.h" />
     <ClInclude Include="SpriteRendererComponent.h" />
@@ -196,6 +197,7 @@
     </ClCompile>
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="ResourceSystem.cpp" />
+    <ClCompile Include="RigidbodyComponent.cpp" />
     <ClCompile Include="SpriteColliderComponent.cpp" />
     <ClCompile Include="SpriteRendererComponent.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
