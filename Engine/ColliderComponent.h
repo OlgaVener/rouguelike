@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "Trigger.h"
 #include <SFML/Graphics/Rect.hpp>
 
 namespace GameEngine
