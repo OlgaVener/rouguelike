@@ -15,6 +15,9 @@ namespace GameEngine
 
         // Триггерная логика
         virtual bool IsTrigger() const { return false; }
-        virtual void InTriggerEnter(ColliderComponent* other) {}
+        virtual void OnTriggerEnter(ColliderComponent* other) {}
+        virtual void OnTriggerExit(const GameEngine::Trigger& trigger);
+       
+        virtual void OnCollision(ColliderComponent* other) {}
     };
 }

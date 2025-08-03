@@ -4,6 +4,8 @@
 #include "ColliderComponent.h"
 #include "RigidbodyComponent.h"
 #include "Vector.h"
+#include "Trigger.h"
+#include "Collision.h"
 
 namespace GameEngine
 {
