@@ -23,29 +23,35 @@ namespace GameEngine
 
     void Engine::Run()
     {
-        auto& window = RenderSystem::Instance()->GetMainWindow();
-        sf::Clock clock;
+        sf::Clock gameClock;
+        sf::Event event;
 
-        while (window.isOpen())
+        while (RenderSystem::Instance()->GetMainWindow().isOpen())
         {
-            // Обработка событий
-            sf::Event event;
-            while (window.pollEvent(event))
+            sf::Time dt = gameClock.restart();
+            float deltaTime = dt.asSeconds();
+
+            while (RenderSystem::Instance()->GetMainWindow().pollEvent(event))
             {
                 if (event.type == sf::Event::Closed)
-                    window.close();
+                {
+                    RenderSystem::Instance()->GetMainWindow().close();
+                }
             }
 
-            // Очистка экрана черным цветом
-            window.clear(sf::Color::Black);
+            if (!RenderSystem::Instance()->GetMainWindow().isOpen())
+            {
+                break;
+            }
 
-            // Обновление игрового мира
-            float deltaTime = clock.restart().asSeconds();
+            RenderSystem::Instance()->GetMainWindow().clear();
+
             GameWorld::Instance()->Update(deltaTime);
+            GameWorld::Instance()->FixedUpdate(deltaTime);
             GameWorld::Instance()->Render();
+            GameWorld::Instance()->LateUpdate();
 
-            // Отображение
-            window.display();
+            RenderSystem::Instance()->GetMainWindow().display();
         }
     }
 }
