@@ -1,10 +1,23 @@
 #pragma once
-#include "Engine/IPositionProvider.h"
 
-class Enemy : public GameEngine::IPositionProvider {
-public:
-    sf::Vector2f position;
+#include "CameraComponent.h"
+#include "GameWorld.h"
+#include "SpriteRendererComponent.h"
+#include "RenderSystem.h"
+#include "ResourceSystem.h"
+#include "InputComponent.h"
+#include "GameObject.h"
+#include "Vector.h"
+#include <CameraComponent.h>
 
-    sf::Vector2f getPosition() const override { return position; }
-    void move(const sf::Vector2f& offset) { position += offset; }
-};
+namespace RoguelikeGame
+{
+	class EnemyAI
+	{
+	public:
+		EnemyAI(const GameEngine::Vector2Df& position, GameEngine::GameObject* player);
+		GameEngine::GameObject* GetGameObject();
+	private:
+		GameEngine::GameObject* gameObject;
+	};
+}

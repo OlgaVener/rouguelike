@@ -163,15 +163,16 @@
     <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Component.h" />
-    <ClInclude Include="EnemyAI.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="Floor.h" />
+    <ClInclude Include="FollowComponent.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameWorld.h" />
     <ClInclude Include="InputComponent.h" />
     <ClInclude Include="IPositionProvider.h" />
-    <ClInclude Include="LevelBuilder.h" />
     <ClInclude Include="Matrix2D.h" />
+    <ClInclude Include="Music.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="RenderSystem.h" />
@@ -180,17 +181,19 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SpriteColliderComponent.h" />
     <ClInclude Include="SpriteRendererComponent.h" />
-    <ClInclude Include="Tile.h" />
+    <ClInclude Include="Wall.h" />
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="Trigger.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioEngine.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="ColliderComponent.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="FollowComponent.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameWorld.cpp" />
     <ClCompile Include="InputComponent.cpp" />

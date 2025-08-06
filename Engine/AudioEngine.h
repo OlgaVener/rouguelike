@@ -1,24 +1,29 @@
 #include <SFML/Audio.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 #include <string>
 #include <unordered_map>
+#include "Component.h"
 
 namespace GameEngine
 {
-    class AudioEngine {
+    class AudioEngine : public Component 
+    {
     public:
-        AudioEngine() = default;
-        ~AudioEngine() = default;
+        AudioEngine(GameObject* gameObject);
+        ~AudioEngine();
 
-        // Загружает музыку по ID
-        bool loadMusic(const std::string& id, const std::string& filepath);
+        void Update(float deltaTime) override;
+        void Render() override;
 
-        // Воспроизводит музыку с указанным ID
-        void playMusic(const std::string& id, bool loop = true);
+        void SetAudio(const sf::SoundBuffer& audio);
+        void SetLoop(bool loop);
 
-        // Останавливает музыку
-        void stopMusic(const std::string& id);
-
+        void SetVolume(float volume);
+        void AudioPlay();
+        void AudioStop();
+        void AudioPause();
+        void AudioResume();
     private:
-        std::unordered_map<std::string, std::unique_ptr<sf::Music>> musicMap;
+        sf::Sound* sound;
     };
 }

@@ -153,6 +153,7 @@
     <ClInclude Include="Constants.h" />
     <ClInclude Include="DeveloperLevel.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="LevelBuilder.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="MenuState.h" />
     <ClInclude Include="GameState.h" />
@@ -161,7 +162,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DeveloperLevel.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameMain.cpp" />
+    <ClCompile Include="LevelBuilder.cpp" />
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="Player.cpp" />
