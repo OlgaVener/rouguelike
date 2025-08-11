@@ -8,7 +8,7 @@ sf::Texture& TextureManager::GetTexture(const std::string& filename) {
     if (it == textures.end()) {
         sf::Texture texture;
         if (!texture.loadFromFile(filename)) {
-            throw std::runtime_error("Failed to load texture: " + filename);
+           throw std::runtime_error("Failed to load texture: " + filename);
         }
         textures[filename] = texture;
         return textures[filename];

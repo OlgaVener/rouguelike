@@ -4,7 +4,7 @@
 
 namespace RoguelikeGame 
 {
-	RoguelikeGame::EnemyAI::EnemyAI(const GameEngine::Vector2Df& position, GameEngine::GameObject* player)
+	EnemyAI::EnemyAI(const GameEngine::Vector2Df& position, GameEngine::GameObject* player)
 	{
 		gameObject = GameEngine::GameWorld::Instance()->CreateGameObject("AI");
 		auto transform = gameObject->GetComponent<GameEngine::TransformComponent>();
@@ -24,7 +24,7 @@ namespace RoguelikeGame
 		auto collider = gameObject->AddComponent<GameEngine::SpriteColliderComponent>();
 	}
 
-	GameEngine::GameObject* RoguelikeGame::EnemyAI::GetGameObject()
+	GameEngine::GameObject* EnemyAI::GetGameObject()
 	{
 		return gameObject;
 	}

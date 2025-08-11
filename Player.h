@@ -15,6 +15,7 @@ namespace RoguelikeGame
     {
     public:
         Player();
+        Player(const GameEngine::Vector2Df& position, GameEngine::GameObject* player); // TODO: Create implementation here
 
         GameEngine::GameObject* GetGameObject();
     private:

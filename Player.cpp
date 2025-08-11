@@ -11,11 +11,11 @@ namespace RoguelikeGame
 
         auto collider = gameObject->AddComponent<GameEngine::SpriteColliderComponent>();
 
-        // Çàãðóæàåì òåêñòóðó
+        // Ø§Ã Ù…Ù‹ÙŽÙˆÃ Ù‡Ù‰ ÙÙ‡ÃªÙŒÙÙŽÙ‹ÙŽ
         playerRenderer->SetTexture(*GameEngine::ResourceSystem::Instance()->GetTextureShared("ball"));
         playerRenderer->SetPixelSize(32, 32);
 
-        //Óñòàíàâëèâàåì ïîçèöèþ êàìåðû
+        //Ø³ÙŒÙÃ ÙŠÃ Ã¢Ã«Ã¨Ã¢Ã Ù‡Ù‰ Ã¯Ã®Ã§Ã¨ÙÃ¨â€ ÃªÃ Ù‰Ù‡Ù‹Ã»
         auto playerCamera = gameObject->AddComponent<GameEngine::CameraComponent>();
         playerCamera->SetWindow(&GameEngine::RenderSystem::Instance()->GetMainWindow());
         playerCamera->SetBaseResolution(1280, 720);

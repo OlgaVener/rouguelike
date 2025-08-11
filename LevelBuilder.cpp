@@ -1,4 +1,5 @@
 #include "LevelBuilder.h"
+#include "Floor.h"
 #include "AudioEngine.h"
 #include "Enemy.h"
 #include "Player.h"
@@ -12,17 +13,16 @@ void LevelBuilder::Start()
     int width = 15;
     int height = 15;
 
-    // создаём игрока
-    player = std::make_unique<RoguelikeGame::Player>(Vector2Df(width / 2 * 128.f, height / 2 * 128.f)
-    );
+    // РЎРѕР·РґР°С‘Рј РёРіСЂРѕРєР°
+    player = std::make_shared<RoguelikeGame::Player>();
 
-    // создаём врага
-    ai = std::make_unique<RoguelikeGame::EnemyAI>(
+    // РЎРѕР·РґР°С‘Рј РР РІСЂР°РіР°
+    ai = std::make_shared<RoguelikeGame::EnemyAI>(
         Vector2Df(width / 3 * 128.f, height / 3 * 128.f),
         player->GetGameObject()
     );
 
-    // создаём аудиокомпонент и подключаем звук
+    // РЎРѕР·РґР°С‘Рј Р°СѓРґРёРѕ
     audio = std::make_unique<AudioEngine>(player->GetGameObject());
 }
 
