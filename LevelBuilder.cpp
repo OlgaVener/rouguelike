@@ -1,28 +1,38 @@
 #include "LevelBuilder.h"
-#include "Wall.h"
+#include "AudioEngine.h"
+#include "Enemy.h"
+#include "Player.h"
 
 using namespace GameEngine;
 
-void GameEngine::LevelBuilder::Start()
-{
-	int width = 15;
-	int height = 15;
+LevelBuilder::~LevelBuilder() = default;
 
-	for (int y = 0; y < height + 1; ++y)
-	{
-		player = std::make_unique<Player>(std::forward<GameEngine::Vector2Df>({ width / 2 * 128.f, height / 2 * 128.f }));
-		ai = std::make_unique<RoguelikeGame::EnemyAI>(std::forward<GameEngine::Vector2Df>({ width / 3 * 128.f, height / 3 * 128.f }), player->GetGameObject());
-		music = std::make_unique<Music>("music");
-	}
+void LevelBuilder::Start()
+{
+    int width = 15;
+    int height = 15;
+
+    // создаём игрока
+    player = std::make_unique<RoguelikeGame::Player>(Vector2Df(width / 2 * 128.f, height / 2 * 128.f)
+    );
+
+    // создаём врага
+    ai = std::make_unique<RoguelikeGame::EnemyAI>(
+        Vector2Df(width / 3 * 128.f, height / 3 * 128.f),
+        player->GetGameObject()
+    );
+
+    // создаём аудиокомпонент и подключаем звук
+    audio = std::make_unique<AudioEngine>(player->GetGameObject());
 }
 
-void GameEngine::LevelBuilder::Restart()
+void LevelBuilder::Restart()
 {
-	Stop();
-	Start();
+    Stop();
+    Start();
 }
 
-void GameEngine::LevelBuilder::Stop()
+void LevelBuilder::Stop()
 {
-	GameWorld::Instance()->Clear();
+    GameWorld::Instance()->Clear();
 }
