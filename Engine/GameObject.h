@@ -1,5 +1,6 @@
 #pragma once
 #include "TransformComponent.h"
+#include "Vector.h"
 #include <iostream>
 #include <vector>
 #include <string>
