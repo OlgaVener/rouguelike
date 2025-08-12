@@ -1,160 +1,175 @@
 #include "pch.h"
 #include "ResourceSystem.h"
+#include <iostream>
 
 namespace GameEngine
 {
-	ResourceSystem* ResourceSystem::Instance()
-	{
-		static ResourceSystem resourceSystem;
-		return &resourceSystem;
-	}
+    ResourceSystem* ResourceSystem::Instance()
+    {
+        static ResourceSystem instance;
+        return &instance;
+    }
 
-	void ResourceSystem::LoadTexture(const std::string& name, std::string sourcePath, bool isSmooth)
-	{
-		if (textures.find(name) != textures.end())
-		{
-			return;
-		}
+    void ResourceSystem::LoadTexture(const std::string& name, const std::string& sourcePath, bool isSmooth)
+    {
+        auto texture = new sf::Texture();
+        if (!texture->loadFromFile(sourcePath))
+        {
+            std::cerr << "No texture " << sourcePath << std::endl;
+            delete texture;
+            return;
+        }
+        texture->setSmooth(isSmooth);
+        textures[name] = texture;
+    }
 
-		sf::Texture* newTexture = new sf::Texture();
-		if (newTexture->loadFromFile(sourcePath))
-		{
-			newTexture->setSmooth(isSmooth);
-			textures.emplace(name, newTexture);
-		}
-	}
+    const sf::Texture* ResourceSystem::GetTextureShared(const std::string& name) const
+    {
+        auto it = textures.find(name);
+        return it != textures.end() ? it->second : nullptr;
+    }
 
-	const sf::Texture* ResourceSystem::GetTextureShared(const std::string& name) const
-	{
-		return textures.find(name)->second;
-	}
+    sf::Texture* ResourceSystem::GetTextureCopy(const std::string& name) const
+    {
+        auto it = textures.find(name);
+        if (it != textures.end())
+            return new sf::Texture(*it->second);
+        return nullptr;
+    }
 
-	sf::Texture* ResourceSystem::GetTextureCopy(const std::string& name) const
-	{
-		return new sf::Texture(*textures.find(name)->second);
-	}
+    void ResourceSystem::DeleteSharedTexture(const std::string& name)
+    {
+        auto it = textures.find(name);
+        if (it != textures.end())
+        {
+            delete it->second;
+            textures.erase(it);
+        }
+    }
 
-	void ResourceSystem::DeleteSharedTexture(const std::string& name)
-	{
-		auto texturePair = textures.find(name);
+    void ResourceSystem::LoadTextureMap(const std::string& name, const std::string& sourcePath,
+        sf::Vector2u elementPixelSize, int totalElements, bool isSmooth)
+    {
+        sf::Texture bigTexture;
+        if (!bigTexture.loadFromFile(sourcePath))
+        {
+            std::cerr << "Textures not loaded: " << sourcePath << std::endl;
+            return;
+        }
+        bigTexture.setSmooth(isSmooth);
 
-		sf::Texture* deletingTexture = texturePair->second;
-		textures.erase(texturePair);
-		delete deletingTexture;
-	}
+        std::vector<sf::Texture*> elements;
+        for (int i = 0; i < totalElements; ++i)
+        {
+            auto tex = new sf::Texture();
+            tex->loadFromImage(
+                bigTexture.copyToImage(),
+                sf::IntRect(i * elementPixelSize.x, 0, elementPixelSize.x, elementPixelSize.y)
+            );
+            tex->setSmooth(isSmooth);
+            elements.push_back(tex);
+        }
+        textureMaps[name] = elements;
+    }
 
-	void ResourceSystem::LoadTextureMap(const std::string& name, std::string sourcePath, sf::Vector2u elementPixelSize, int totalElements, bool isSmooth)
-	{
-		if (textureMaps.find(name) != textureMaps.end())
-		{
-			return;
-		}
+    const sf::Texture* ResourceSystem::GetTextureMapElementShared(const std::string& name, int elementIndex) const
+    {
+        auto it = textureMaps.find(name);
+        if (it != textureMaps.end() && elementIndex >= 0 && elementIndex < (int)it->second.size())
+            return it->second[elementIndex];
+        return nullptr;
+    }
 
-		sf::Texture textureMap;
-		if (textureMap.loadFromFile(sourcePath))
-		{
-			std::vector<sf::Texture*> textureElements;
+    sf::Texture* ResourceSystem::GetTextureMapElementCopy(const std::string& name, int elementIndex) const
+    {
+        auto it = textureMaps.find(name);
+        if (it != textureMaps.end() && elementIndex >= 0 && elementIndex < (int)it->second.size())
+            return new sf::Texture(*it->second[elementIndex]);
+        return nullptr;
+    }
 
-			auto textureSize = textureMap.getSize();
-			int loadedElements = 0;
+    int ResourceSystem::GetTextureMapElementsCount(const std::string& name) const
+    {
+        auto it = textureMaps.find(name);
+        return (it != textureMaps.end()) ? (int)it->second.size() : 0;
+    }
 
-			for (int y = 0; y <= textureSize.y - elementPixelSize.y; y += elementPixelSize.y)
-			{
-				if (loadedElements == totalElements)
-				{
-					break;
-				}
+    void ResourceSystem::DeleteSharedTextureMap(const std::string& name)
+    {
+        auto it = textureMaps.find(name);
+        if (it != textureMaps.end())
+        {
+            for (auto tex : it->second) delete tex;
+            textureMaps.erase(it);
+        }
+    }
 
-				for (int x = 0; x <= textureSize.x - elementPixelSize.x; x += elementPixelSize.x)
-				{
-					if (loadedElements == totalElements)
-					{
-						break;
-					}
+    void ResourceSystem::LoadSoundBuffer(const std::string& name, const std::string& sourcePath)
+    {
+        auto buffer = new sf::SoundBuffer();
+        if (!buffer->loadFromFile(sourcePath))
+        {
+            std::cerr << "No sound " << sourcePath << std::endl;
+            delete buffer;
+            return;
+        }
+        soundBuffers[name] = buffer;
+    }
 
-					sf::Texture* newTextureMapElement = new sf::Texture();
-					if (newTextureMapElement->loadFromFile(sourcePath, sf::IntRect(x, y, elementPixelSize.x, elementPixelSize.y)))
-					{
-						newTextureMapElement->setSmooth(isSmooth);
-						textureElements.push_back(newTextureMapElement);
-					}
-					loadedElements++;
-				}
-			}
+    const sf::SoundBuffer* ResourceSystem::GetSoundBuffer(const std::string& name) const
+    {
+        auto it = soundBuffers.find(name);
+        return it != soundBuffers.end() ? it->second : nullptr;
+    }
 
-			textureMaps.emplace(name, textureElements);
-		}
-	}
+    void ResourceSystem::LoadMusic(const std::string& name, const std::string& sourcePath)
+    {
+        auto music = new sf::Music();
+        if (!music->openFromFile(sourcePath))
+        {
+            std::cerr << "Sound not loaded: " << sourcePath << std::endl;
+            delete music;
+            return;
+        }
+        musics[name] = music;
+    }
 
-	const sf::Texture* ResourceSystem::GetTextureMapElementShared(const std::string& name, int elementIndex) const
-	{
-		auto textureMap = textureMaps.find(name);
-		auto textures = textureMap->second;
-		return textures[elementIndex];
-	}
+    sf::Music* ResourceSystem::GetMusic(const std::string& name) const
+    {
+        auto it = musics.find(name);
+        return it != musics.end() ? it->second : nullptr;
+    }
 
-	sf::Texture* ResourceSystem::GetTextureMapElementCopy(const std::string& name, int elementIndex) const
-	{
-		auto textureMap = textureMaps.find(name);
-		auto textures = textureMap->second;
-		return new sf::Texture(*textures[elementIndex]);
-	}
+    void ResourceSystem::DeleteAllTextures()
+    {
+        for (auto& t : textures) delete t.second;
+        textures.clear();
+    }
 
-	int ResourceSystem::GetTextureMapElementsCount(const std::string& name) const
-	{
-		auto textureMap = textureMaps.find(name);
-		auto textures = textureMap->second;
-		return textures.size();
-	}
+    void ResourceSystem::DeleteAllTextureMaps()
+    {
+        for (auto& tm : textureMaps)
+            for (auto tex : tm.second) delete tex;
+        textureMaps.clear();
+    }
 
-	void ResourceSystem::DeleteSharedTextureMap(const std::string& name)
-	{
-		auto textureMap = textureMaps.find(name);
-		auto deletingTextures = textureMap->second;
+    void ResourceSystem::DeleteAllSounds()
+    {
+        for (auto& s : soundBuffers) delete s.second;
+        soundBuffers.clear();
+    }
 
-		for (int i = 0; i < deletingTextures.size(); ++i)
-		{
-			delete deletingTextures[i];
-		}
+    void ResourceSystem::DeleteAllMusic()
+    {
+        for (auto& m : musics) delete m.second;
+        musics.clear();
+    }
 
-		textureMaps.erase(textureMap);
-	}
-
-	void ResourceSystem::Clear()
-	{
-		DeleteAllTextures();
-		DeleteAllTextureMaps();
-	}
-
-	void ResourceSystem::DeleteAllTextures()
-	{
-		std::vector<std::string> keysToDelete;
-
-		for (const auto& texturePair : textures)
-		{
-			keysToDelete.push_back(texturePair.first);
-		}
-
-		for (const auto& key : keysToDelete)
-		{
-			DeleteSharedTexture(key);
-		}
-	}
-
-	void ResourceSystem::DeleteAllTextureMaps()
-	{
-		std::vector<std::string> keysToDelete;
-
-		for (const auto& textureMapPair : textureMaps)
-		{
-			keysToDelete.push_back(textureMapPair.first);
-		}
-
-		for (const auto& key : keysToDelete)
-		{
-			DeleteSharedTextureMap(key);
-		}
-	}
-
-
+    void ResourceSystem::Clear()
+    {
+        DeleteAllTextures();
+        DeleteAllTextureMaps();
+        DeleteAllSounds();
+        DeleteAllMusic();
+    }
 }

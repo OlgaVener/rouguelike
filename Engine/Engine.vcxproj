@@ -171,7 +171,6 @@
     <ClInclude Include="InputComponent.h" />
     <ClInclude Include="IPositionProvider.h" />
     <ClInclude Include="Matrix2D.h" />
-    <ClInclude Include="Music.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="RenderSystem.h" />

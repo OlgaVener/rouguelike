@@ -11,42 +11,46 @@ namespace GameEngine
     {
         return T1(vec.x, vec.y);
     }
-
-    SpriteRendererComponent::SpriteRendererComponent(GameObject* gameObject) : Component(gameObject)
+    SpriteRendererComponent::SpriteRendererComponent(GameObject* gameObject)
+        : Component(gameObject),
+        sprite(new sf::Sprite()),
+        transform(gameObject->GetComponent<TransformComponent>()),
+        scale(1.f, -1.f),
+        isFlipX(false),
+        isFlipY(false)
     {
-        sprite = new sf::Sprite();
-        scale = { 1, -1 };
-        sprite->setScale({ 1, -1 });
-        transform = gameObject->GetComponent<TransformComponent>();
+        if (!sprite)
+        {
+            throw std::runtime_error("Failed to create sprite!");
+        }
+        sprite->setScale(scale.x, scale.y);
     }
 
     SpriteRendererComponent::~SpriteRendererComponent()
     {
-        if (sprite != nullptr)
-        {
-            delete sprite;
-        }
+        delete sprite;  // delete безопасен с nullptr
     }
 
-
-    void SpriteRendererComponent::Update(float deltaTime) 
+    void SpriteRendererComponent::Update(float deltaTime)
     {
-        if (transform && sprite) 
+        if (transform && sprite)
         {
-            auto pos = transform->GetWorldPosition();
-            sprite->setPosition(pos.x, pos.y);
+            sprite->setPosition(Convert<sf::Vector2f, Vector2Df>(transform->GetWorldPosition()));
         }
     }
 
     void SpriteRendererComponent::Render()
     {
-        if (sprite != nullptr && transform != nullptr)
+        if (sprite && transform && sprite->getTexture())
         {
-            sprite->setPosition(Convert<sf::Vector2f, Vector2Df>(transform->GetWorldPosition()));
             sprite->setRotation(transform->GetWorldRotation());
 
             auto transformScale = Convert<sf::Vector2f, Vector2Df>(transform->GetWorldScale());
-            sprite->setScale({ scale.x * transformScale.x, scale.y * transformScale.y });
+            sprite->setScale({
+                scale.x * transformScale.x * (isFlipX ? -1.f : 1.f),
+                scale.y * transformScale.y * (isFlipY ? -1.f : 1.f)
+                });
+
             RenderSystem::Instance()->Render(*sprite);
         }
     }
@@ -55,40 +59,65 @@ namespace GameEngine
     {
         return sprite;
     }
-
+  
     void SpriteRendererComponent::SetTexture(const sf::Texture& newTexture)
     {
-        sprite->setTexture(newTexture);
-        auto textureSize = sprite->getTexture()->getSize();
-        sprite->setOrigin({ 0.5f * textureSize.x, 0.5f * textureSize.y });
+        if (!sprite)
+        {
+            return;
+        }
+
+        sprite->setTexture(newTexture, true);
+
+        // Проверяем, что текстура установлена
+        const sf::Texture* texture = sprite->getTexture();
+        if (!texture)
+        {
+            // Ошибка: текстура не установлена
+            return;
+        }
+
+        // Устанавливаем origin в центр текстуры
+        sf::Vector2u textureSize = texture->getSize();
+        sprite->setOrigin(textureSize.x * 0.5f, textureSize.y * 0.5f);
     }
 
     void SpriteRendererComponent::SetPixelSize(int newWidth, int newHeight)
     {
-        auto originalSize = sprite->getTexture()->getSize();
-        sprite->setScale(
-            (float)newWidth / (float)originalSize.x,
-            (float)newHeight / (float)originalSize.y
-        );
+        if (sprite && sprite->getTexture())
+        {
+            auto textureSize = sprite->getTexture()->getSize();
+            if (textureSize.x > 0 && textureSize.y > 0)
+            {
+                scale.x = static_cast<float>(newWidth) / textureSize.x;
+                scale.y = static_cast<float>(newHeight) / textureSize.y;
+
+                auto transformScale = Convert<sf::Vector2f, Vector2Df>(transform->GetWorldScale());
+                sprite->setScale({
+                    scale.x * transformScale.x * (isFlipX ? -1.f : 1.f),
+                    scale.y * transformScale.y * (isFlipY ? -1.f : 1.f)
+                    });
+            }
+        }
     }
 
     void SpriteRendererComponent::FlipX(bool flip)
     {
-        if (flip != isFlipX)
+        if (sprite && flip != isFlipX)
         {
-            auto scale = sprite->getScale();
-            sprite->setScale({ -scale.x, scale.y });
             isFlipX = flip;
+            auto currentScale = sprite->getScale();
+            sprite->setScale(-currentScale.x, currentScale.y);
         }
     }
 
     void SpriteRendererComponent::FlipY(bool flip)
     {
-        if (flip != isFlipY)
+        if (sprite && flip != isFlipY)
         {
-            auto scale = sprite->getScale();
-            sprite->setScale({ scale.x, -scale.y });
             isFlipY = flip;
+            auto currentScale = sprite->getScale();
+            sprite->setScale(currentScale.x, -currentScale.y);
         }
     }
 }

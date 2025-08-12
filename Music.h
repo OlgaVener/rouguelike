@@ -1,8 +1,8 @@
 #pragma once
-
 #include <SFML/Audio.hpp>
 #include "AudioEngine.h"
 #include "ResourceSystem.h"
+#include "GameObject.h"
 
 namespace RoguelikeGame
 {
@@ -21,6 +21,5 @@ namespace RoguelikeGame
     private:
         GameEngine::GameObject* gameObject;
         GameEngine::AudioEngine* audioEngine;
-        const sf::SoundBuffer* soundBuffer;
     };
 }

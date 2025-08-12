@@ -1,33 +1,36 @@
 #pragma once
-
-#include <array>
 #include <memory>
 #include <vector>
-#include "Scene.h"
-#include "Wall.h"
+
 #include "Floor.h"
+#include "Wall.h"
+#include "AudioEngine.h"
 #include "Player.h"
 #include "Enemy.h"
 
 namespace GameEngine
 {
-    class AudioEngine;
-    class Wall;
-    class Floor;
-    
-    class LevelBuilder : public Scene
+    class LevelBuilder
     {
     public:
-        ~LevelBuilder(); // Реализация будет в .cpp
-        void Start() override;
-        void Restart() override;
-        void Stop() override;
+        ~LevelBuilder();
+
+        void Start();
+        void Restart();
+        void Stop();
 
     private:
+        // Вектор объектов пола
+        std::vector<std::unique_ptr<RoguelikeGame::Floor>> floors;
+
+        // Вектор объектов стен
+        std::vector<std::unique_ptr<RoguelikeGame::Wall>> walls;
+
+        // Аудиосистема
+        std::unique_ptr<AudioEngine> audio;
+
+        // Игрок и враг (в shared_ptr, чтобы делить владение)
         std::shared_ptr<RoguelikeGame::Player> player;
         std::shared_ptr<RoguelikeGame::EnemyAI> ai;
-        std::unique_ptr<AudioEngine> audio;
-        std::vector<std::unique_ptr<Wall>> walls;
-        std::vector<std::unique_ptr<Floor>> floor;
     };
 }

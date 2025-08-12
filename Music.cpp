@@ -1,50 +1,34 @@
 #include "Music.h"
+#include <iostream>
 
-RoguelikeGame::Music::Music(const std::string& musicName)
+namespace RoguelikeGame
 {
-    // Создаем игровой объект для аудио
-    gameObject = GameEngine::GameWorld::Instance()->CreateGameObject("Music");
-
-    // Добавляем компонент AudioEngine
-    audioEngine = gameObject->AddComponent<GameEngine::AudioEngine>();
-
-    // Загружаем звуковой буфер через ResourceSystem
-    soundBuffer = GameEngine::ResourceSystem::Instance()->GetSoundBufferShared(musicName);
-
-    // Устанавливаем аудио
-    if (soundBuffer)
+    Music::Music(const std::string& musicName)
     {
-        audioEngine->SetAudio(*soundBuffer);
+        gameObject = new GameEngine::GameObject();
+        audioEngine = new GameEngine::AudioEngine(gameObject, GameEngine::AudioEngine::AudioType::Music);
+
+        auto musicPtr = GameEngine::ResourceSystem::Instance()->GetMusic(musicName);
+        if (musicPtr)
+        {
+            audioEngine->SetAudio(musicPtr);
+        }
+        else
+        {
+            std::cerr << "Музыка не найдена: " << musicName << std::endl;
+        }
     }
-}
 
-RoguelikeGame::Music::~Music()
-{
-    // Останавливаем музыку при уничтожении
-    audioEngine->AudioStop();
-}
+    Music::~Music()
+    {
+        delete audioEngine;
+        delete gameObject;
+    }
 
-void RoguelikeGame::Music::Play()
-{
-    audioEngine->AudioPlay();
-}
+    void Music::Play() { audioEngine->Play(); }
+    void Music::Stop() { audioEngine->Stop(); }
+    void Music::Pause() { audioEngine->Pause(); }
 
-void RoguelikeGame::Music::Stop()
-{
-    audioEngine->AudioStop();
-}
-
-void RoguelikeGame::Music::Pause()
-{
-    audioEngine->AudioPause();
-}
-
-void RoguelikeGame::Music::SetVolume(float volume)
-{
-    audioEngine->SetVolume(volume);
-}
-
-void RoguelikeGame::Music::SetLoop(bool loop)
-{
-    audioEngine->SetLoop(loop);
+    void Music::SetVolume(float volume) { audioEngine->SetVolume(volume); }
+    void Music::SetLoop(bool loop) { audioEngine->SetLoop(loop); }
 }

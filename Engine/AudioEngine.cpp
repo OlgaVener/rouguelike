@@ -1,62 +1,64 @@
 #include "pch.h"
 #include "AudioEngine.h"
+#include "GameObject.h"
+#include <SFML/Audio.hpp>
 
-GameEngine::AudioEngine::AudioEngine(GameObject* gameObject) : Component(gameObject)
+namespace GameEngine
 {
-	sound = new sf::Sound();
-}
+    AudioEngine::AudioEngine(GameObject* gameObject, AudioType type)
+        : Component(gameObject), type(type), sound(nullptr), music(nullptr)
+    {
+        if (type == AudioType::Sound)
+            sound = new sf::Sound();
+    }
 
-GameEngine::AudioEngine::~AudioEngine()
-{
-	sound->stop();
-	delete sound;
-}
+    AudioEngine::~AudioEngine()
+    {
+        if (sound) delete sound;
+    }
 
-void GameEngine::AudioEngine::Update(float deltaTime)
-{
-}
+    void AudioEngine::SetAudio(const sf::SoundBuffer& audio)
+    {
+        if (sound) sound->setBuffer(audio);
+    }
 
-void GameEngine::AudioEngine::Render()
-{
-}
+    void AudioEngine::SetAudio(sf::Music* musicPtr)
+    {
+        music = musicPtr;
+    }
 
-void GameEngine::AudioEngine::SetAudio(const sf::SoundBuffer& audio)
-{
-	sound->setBuffer(audio);
-}
+    void AudioEngine::SetLoop(bool loop)
+    {
+        if (type == AudioType::Sound && sound) sound->setLoop(loop);
+        if (type == AudioType::Music && music) music->setLoop(loop);
+    }
 
-void GameEngine::AudioEngine::SetLoop(bool loop)
-{
-	sound->setLoop(loop);
-}
+    void AudioEngine::SetVolume(float volume)
+    {
+        if (type == AudioType::Sound && sound) sound->setVolume(volume);
+        if (type == AudioType::Music && music) music->setVolume(volume);
+    }
 
-void GameEngine::AudioEngine::SetVolume(float volume)
-{
-	sound->setVolume(volume);
-}
+    void AudioEngine::Play()
+    {
+        if (type == AudioType::Sound && sound) sound->play();
+        if (type == AudioType::Music && music) music->play();
+    }
 
-void GameEngine::AudioEngine::AudioPlay()
-{
-	if (sound->getStatus() != sf::SoundSource::Playing)
-	{
-		sound->play();
-	}
-}
+    void AudioEngine::Stop()
+    {
+        if (type == AudioType::Sound && sound) sound->stop();
+        if (type == AudioType::Music && music) music->stop();
+    }
 
-void GameEngine::AudioEngine::AudioStop()
-{
-	sound->stop();
-}
+    void AudioEngine::Pause()
+    {
+        if (type == AudioType::Sound && sound) sound->pause();
+        if (type == AudioType::Music && music) music->pause();
+    }
 
-void GameEngine::AudioEngine::AudioPause()
-{
-	sound->pause();
-}
-
-void GameEngine::AudioEngine::AudioResume()
-{
-	if (sound->getStatus() != sf::SoundSource::Playing)
-	{
-		sound->play();
-	}
+    void AudioEngine::Resume()
+    {
+        Play();
+    }
 }
