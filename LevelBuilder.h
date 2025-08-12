@@ -12,8 +12,8 @@
 namespace GameEngine
 {
     class AudioEngine;
-    //class Wall;
-    //class Floor;
+    class Wall;
+    class Floor;
     
     class LevelBuilder : public Scene
     {
@@ -27,7 +27,7 @@ namespace GameEngine
         std::shared_ptr<RoguelikeGame::Player> player;
         std::shared_ptr<RoguelikeGame::EnemyAI> ai;
         std::unique_ptr<AudioEngine> audio;
-        //std::vector<std::unique_ptr<Wall>> walls;
-        //std::vector<std::unique_ptr<Floor>> floor;
+        std::vector<std::unique_ptr<Wall>> walls;
+        std::vector<std::unique_ptr<Floor>> floor;
     };
 }
