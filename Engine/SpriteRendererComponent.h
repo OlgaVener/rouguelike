@@ -16,7 +16,7 @@ namespace GameEngine
 		void Render() override;
 
 		const sf::Sprite* GetSprite() const;
-		void SetTexture(const sf::Texture& newTexture);
+		void SetTexture(const sf::Texture* newTexture);
 		void SetPixelSize(int newWidth, int newHeight);
 
 		void FlipX(bool flip);

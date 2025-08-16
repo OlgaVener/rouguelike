@@ -29,24 +29,6 @@ namespace GameEngine
         return it != textures.end() ? it->second : nullptr;
     }
 
-    sf::Texture* ResourceSystem::GetTextureCopy(const std::string& name) const
-    {
-        auto it = textures.find(name);
-        if (it != textures.end())
-            return new sf::Texture(*it->second);
-        return nullptr;
-    }
-
-    void ResourceSystem::DeleteSharedTexture(const std::string& name)
-    {
-        auto it = textures.find(name);
-        if (it != textures.end())
-        {
-            delete it->second;
-            textures.erase(it);
-        }
-    }
-
     void ResourceSystem::LoadTextureMap(const std::string& name, const std::string& sourcePath,
         sf::Vector2u elementPixelSize, int totalElements, bool isSmooth)
     {
@@ -71,6 +53,25 @@ namespace GameEngine
         }
         textureMaps[name] = elements;
     }
+
+    sf::Texture* ResourceSystem::GetTextureCopy(const std::string& name) const
+    {
+        auto it = textures.find(name);
+        if (it != textures.end())
+            return new sf::Texture(*it->second);
+        return nullptr;
+    }
+
+    void ResourceSystem::DeleteSharedTexture(const std::string& name)
+    {
+        auto it = textures.find(name);
+        if (it != textures.end())
+        {
+            delete it->second;
+            textures.erase(it);
+        }
+    }
+
 
     const sf::Texture* ResourceSystem::GetTextureMapElementShared(const std::string& name, int elementIndex) const
     {

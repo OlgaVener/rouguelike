@@ -1,11 +1,13 @@
 #include "Floor.h"
 #include <iostream>
+#include "SpriteRendererComponent.h"
+#include "GameWorld.h"
+#include "ResourceSystem.h"
 
 RoguelikeGame::Floor::Floor(const GameEngine::Vector2D<float>& position, int textureMapIndex)
     : gameObject(nullptr)
 {
     gameObject = GameEngine::GameWorld::Instance()->CreateGameObject("Floor");
-
     auto transform = gameObject->GetComponent<GameEngine::TransformComponent>();
     transform->SetWorldPosition(position);
 
@@ -15,18 +17,19 @@ RoguelikeGame::Floor::Floor(const GameEngine::Vector2D<float>& position, int tex
 
     if (!texture)
     {
-        std::cerr << "ERROR: Failed to get floor texture with index " << textureMapIndex << std::endl;
+        std::cerr << "ERROR: Failed to get floor texture with index "
+            << textureMapIndex << std::endl;
         return;
     }
 
-    // Проверяем размер текстуры
     if (texture->getSize().x == 0 || texture->getSize().y == 0)
     {
-        std::cerr << "ERROR: Invalid floor texture size for index " << textureMapIndex << std::endl;
+        std::cerr << "ERROR: Invalid floor texture size for index "
+            << textureMapIndex << std::endl;
         return;
     }
 
     auto renderer = gameObject->AddComponent<GameEngine::SpriteRendererComponent>();
-    renderer->SetTexture(*texture);
+    renderer->SetTexture(texture);
     renderer->SetPixelSize(128, 128);
 }

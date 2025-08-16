@@ -11,7 +11,7 @@ namespace RoguelikeGame
 		transform->SetWorldPosition(position);
 
 		auto renderer = gameObject->AddComponent<GameEngine::SpriteRendererComponent>();
-		renderer->SetTexture(*GameEngine::ResourceSystem::Instance()->GetTextureMapElementShared("AI", 0));
+		renderer->SetTexture(GameEngine::ResourceSystem::Instance()->GetTextureMapElementShared("AI", 0));
 		renderer->SetPixelSize(100, 100);
 
 		auto follower = gameObject->AddComponent<GameEngine::FollowComponent>();
