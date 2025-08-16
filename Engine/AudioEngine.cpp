@@ -56,9 +56,4 @@ namespace GameEngine
         if (type == AudioType::Sound && sound) sound->pause();
         if (type == AudioType::Music && music) music->pause();
     }
-
-    void AudioEngine::Resume()
-    {
-        Play();
-    }
 }

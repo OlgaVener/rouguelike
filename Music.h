@@ -1,25 +1,28 @@
 #pragma once
-#include <SFML/Audio.hpp>
 #include "AudioEngine.h"
-#include "ResourceSystem.h"
 #include "GameObject.h"
+#include <string>
 
 namespace RoguelikeGame
 {
     class Music
     {
     public:
-        Music(const std::string& musicName);
+        explicit Music(const std::string& filename);
         ~Music();
 
+        bool Load(const std::string& filename);
+
         void Play();
+        void SetFadeIn(float durationSec);
+        void Update(float deltaTime);
         void Stop();
         void Pause();
         void SetVolume(float volume);
         void SetLoop(bool loop);
 
     private:
-        GameEngine::GameObject* gameObject;
-        GameEngine::AudioEngine* audioEngine;
+        GameEngine::GameObject* gameObject = nullptr;
+        GameEngine::AudioEngine* audioEngine = nullptr;
     };
 }

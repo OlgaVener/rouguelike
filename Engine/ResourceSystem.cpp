@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ResourceSystem.h"
 #include <iostream>
+#include <filesystem>
 
 namespace GameEngine
 {
@@ -123,23 +124,38 @@ namespace GameEngine
         return it != soundBuffers.end() ? it->second : nullptr;
     }
 
-    void ResourceSystem::LoadMusic(const std::string& name, const std::string& sourcePath)
-    {
-        auto music = new sf::Music();
-        if (!music->openFromFile(sourcePath))
-        {
-            std::cerr << "Sound not loaded: " << sourcePath << std::endl;
-            delete music;
+    void ResourceSystem::LoadMusic(const std::string& name, const std::string& sourcePath) {
+        auto music = std::make_unique<sf::Music>();
+        if (!music->openFromFile(sourcePath)) {
+            std::cerr << "Failed to load music: " << sourcePath << std::endl;
             return;
         }
-        musics[name] = music;
+        musics[name] = music.release();
     }
 
-    sf::Music* ResourceSystem::GetMusic(const std::string& name) const
-    {
-        auto it = musics.find(name);
-        return it != musics.end() ? it->second : nullptr;
+
+    sf::Music* ResourceSystem::GetMusic(const std::string& filename) {
+
+        if (auto it = musicCache.find(filename); it != musicCache.end()) {
+            return it->second.get();
+        }
+
+        // Загрузка музыки
+        auto music = std::make_unique<sf::Music>();
+        std::filesystem::path fullPath = std::filesystem::current_path() / "Resources" / "Sounds" / "main_theme.wav";
+
+        if (!music->openFromFile(fullPath.string())) {
+            std::cerr << "Failed to load music: " << fullPath << std::endl;
+            return nullptr;
+        }
+
+        // Сохраняем в кэш
+        auto* musicPtr = music.get();
+        musicCache[filename] = std::move(music);
+        return musicPtr;
     }
+
+
 
     void ResourceSystem::DeleteAllTextures()
     {
@@ -160,10 +176,12 @@ namespace GameEngine
         soundBuffers.clear();
     }
 
-    void ResourceSystem::DeleteAllMusic()
-    {
-        for (auto& m : musics) delete m.second;
+    void ResourceSystem::DeleteAllMusic() {
+        for (auto& m : musics) {
+            delete m.second;
+        }
         musics.clear();
+        musicCache.clear();
     }
 
     void ResourceSystem::Clear()

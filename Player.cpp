@@ -20,6 +20,9 @@ namespace RoguelikeGame
 
         auto playerInput = gameObject->AddComponent<GameEngine::InputComponent>();
 
+        //auto movement = gameObject->AddComponent<GameEngine::MovementComponent>();
+        //movement->SetSpeed(400.f);
+
         auto transform = gameObject->GetComponent<GameEngine::TransformComponent>();
         transform->RotateBy(90.f);
         transform->MoveBy({ 1.f, 0.f });

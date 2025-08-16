@@ -21,7 +21,6 @@ namespace GameEngine
         void Play();
         void Stop();
         void Pause();
-        void Resume();
 
     private:
         AudioType type;

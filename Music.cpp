@@ -1,34 +1,49 @@
 #include "Music.h"
+#include "ResourceSystem.h"
 #include <iostream>
 
 namespace RoguelikeGame
 {
-    Music::Music(const std::string& musicName)
+    Music::Music(const std::string& filename)
+        : gameObject(new GameEngine::GameObject()),
+        audioEngine(new GameEngine::AudioEngine(gameObject, GameEngine::AudioEngine::AudioType::Music))
     {
-        gameObject = new GameEngine::GameObject();
-        audioEngine = new GameEngine::AudioEngine(gameObject, GameEngine::AudioEngine::AudioType::Music);
-
-        auto musicPtr = GameEngine::ResourceSystem::Instance()->GetMusic(musicName);
-        if (musicPtr)
-        {
-            audioEngine->SetAudio(musicPtr);
-        }
-        else
-        {
-            std::cerr << "Музыка не найдена: " << musicName << std::endl;
-        }
+        Load(filename);
     }
 
     Music::~Music()
     {
+        // Порядок важен!
         delete audioEngine;
         delete gameObject;
     }
 
-    void Music::Play() { audioEngine->Play(); }
-    void Music::Stop() { audioEngine->Stop(); }
-    void Music::Pause() { audioEngine->Pause(); }
+    bool Music::Load(const std::string& filename)
+    {
+        auto musicPtr = GameEngine::ResourceSystem::Instance()->GetMusic(filename);
+        if (!musicPtr)
+        {
+            std::cerr << "Music file not found: " << filename << std::endl;
+            return false;
+        }
 
-    void Music::SetVolume(float volume) { audioEngine->SetVolume(volume); }
-    void Music::SetLoop(bool loop) { audioEngine->SetLoop(loop); }
+        audioEngine->SetAudio(musicPtr);
+        return true;
+    }
+
+    void Music::Play()
+    {
+        audioEngine->Play();
+    }
+
+    void Music::SetFadeIn(float durationSec)
+    {
+        // Реализация плавного появления
+        // Можно использовать sf::Clock и обновлять в Update()
+    }
+
+    void Music::Update(float deltaTime)
+    {
+        // Здесь можно обрабатывать фэды и другие эффекты
+    }
 }

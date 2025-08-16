@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <memory>
 
 namespace GameEngine
 {
@@ -32,7 +33,8 @@ namespace GameEngine
 
         // --- Музыка ---
         void LoadMusic(const std::string& name, const std::string& sourcePath);
-        sf::Music* GetMusic(const std::string& name) const;
+        sf::Music* GetMusic(const std::string& filename);
+        //sf::Music* GetMusic(const std::string& name) const;
 
         // --- Очистка ---
         void DeleteAllTextures();
@@ -49,5 +51,6 @@ namespace GameEngine
         std::unordered_map<std::string, std::vector<sf::Texture*>> textureMaps;
         std::unordered_map<std::string, sf::SoundBuffer*> soundBuffers;
         std::unordered_map<std::string, sf::Music*> musics;
+        std::unordered_map<std::string, std::unique_ptr<sf::Music>> musicCache;
     };
 }
