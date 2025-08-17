@@ -3,6 +3,7 @@
 
 std::map<std::string, sf::Texture> TextureManager::textures;
 
+//Проверка и загрузка текстур
 sf::Texture& TextureManager::GetTexture(const std::string& filename) {
     auto it = textures.find(filename);
     if (it == textures.end()) {

@@ -5,12 +5,14 @@
 
 namespace GameEngine
 {
+    // Реализация singleton-паттерна
     ResourceSystem* ResourceSystem::Instance()
     {
-        static ResourceSystem instance;
+        static ResourceSystem instance; // Единственный экземпляр
         return &instance;
     }
 
+    // Загрузка текстуры из файла
     void ResourceSystem::LoadTexture(const std::string& name, const std::string& sourcePath, bool isSmooth)
     {
         auto texture = new sf::Texture();
@@ -20,16 +22,18 @@ namespace GameEngine
             delete texture;
             return;
         }
-        texture->setSmooth(isSmooth);
-        textures[name] = texture;
+        texture->setSmooth(isSmooth); // Настройка сглаживания
+        textures[name] = texture;     // Сохранение в контейнер
     }
 
+    // Получение указателя на текстуру (без передачи владения)
     const sf::Texture* ResourceSystem::GetTextureShared(const std::string& name) const
     {
         auto it = textures.find(name);
-        return it != textures.end() ? it->second : nullptr;
+        return it != textures.end() ? it->second : nullptr; // Возвращаем nullptr если не найдено
     }
 
+    // Загрузка текстурного атласа (набора текстур из одного файла)
     void ResourceSystem::LoadTextureMap(const std::string& name, const std::string& sourcePath,
         sf::Vector2u elementPixelSize, int totalElements, bool isSmooth)
     {
@@ -41,6 +45,7 @@ namespace GameEngine
         }
         bigTexture.setSmooth(isSmooth);
 
+        // Разделение большой текстуры на элементы
         std::vector<sf::Texture*> elements;
         for (int i = 0; i < totalElements; ++i)
         {
@@ -52,28 +57,30 @@ namespace GameEngine
             tex->setSmooth(isSmooth);
             elements.push_back(tex);
         }
-        textureMaps[name] = elements;
+        textureMaps[name] = elements; // Сохранение набора текстур
     }
 
+    // Создание копии текстуры (с передачей владения)
     sf::Texture* ResourceSystem::GetTextureCopy(const std::string& name) const
     {
         auto it = textures.find(name);
         if (it != textures.end())
-            return new sf::Texture(*it->second);
+            return new sf::Texture(*it->second); // Создаем новую копию
         return nullptr;
     }
 
+    // Удаление текстуры из системы
     void ResourceSystem::DeleteSharedTexture(const std::string& name)
     {
         auto it = textures.find(name);
         if (it != textures.end())
         {
-            delete it->second;
-            textures.erase(it);
+            delete it->second;    // Освобождение памяти
+            textures.erase(it);   // Удаление из контейнера
         }
     }
 
-
+    // Получение элемента из текстурного атласа (без передачи владения)
     const sf::Texture* ResourceSystem::GetTextureMapElementShared(const std::string& name, int elementIndex) const
     {
         auto it = textureMaps.find(name);
@@ -82,6 +89,7 @@ namespace GameEngine
         return nullptr;
     }
 
+    // Создание копии элемента из текстурного атласа (с передачей владения)
     sf::Texture* ResourceSystem::GetTextureMapElementCopy(const std::string& name, int elementIndex) const
     {
         auto it = textureMaps.find(name);
@@ -90,22 +98,25 @@ namespace GameEngine
         return nullptr;
     }
 
+    // Получение количества элементов в текстурном атласе
     int ResourceSystem::GetTextureMapElementsCount(const std::string& name) const
     {
         auto it = textureMaps.find(name);
         return (it != textureMaps.end()) ? (int)it->second.size() : 0;
     }
 
+    // Удаление текстурного атласа
     void ResourceSystem::DeleteSharedTextureMap(const std::string& name)
     {
         auto it = textureMaps.find(name);
         if (it != textureMaps.end())
         {
-            for (auto tex : it->second) delete tex;
-            textureMaps.erase(it);
+            for (auto tex : it->second) delete tex; // Удаление всех текстур
+            textureMaps.erase(it);                  // Удаление из контейнера
         }
     }
 
+    // Загрузка звукового буфера
     void ResourceSystem::LoadSoundBuffer(const std::string& name, const std::string& sourcePath)
     {
         auto buffer = new sf::SoundBuffer();
@@ -115,27 +126,29 @@ namespace GameEngine
             delete buffer;
             return;
         }
-        soundBuffers[name] = buffer;
+        soundBuffers[name] = buffer; // Сохранение в контейнер
     }
 
+    // Получение звукового буфера
     const sf::SoundBuffer* ResourceSystem::GetSoundBuffer(const std::string& name) const
     {
         auto it = soundBuffers.find(name);
         return it != soundBuffers.end() ? it->second : nullptr;
     }
 
+    // Загрузка музыки (устаревший метод)
     void ResourceSystem::LoadMusic(const std::string& name, const std::string& sourcePath) {
         auto music = std::make_unique<sf::Music>();
         if (!music->openFromFile(sourcePath)) {
             std::cerr << "Failed to load music: " << sourcePath << std::endl;
             return;
         }
-        musics[name] = music.release();
+        musics[name] = music.release(); // Передача владения
     }
 
-
+    // Улучшенный метод загрузки музыки с кэшированием
     sf::Music* ResourceSystem::GetMusic(const std::string& filename) {
-
+        // Проверка кэша
         if (auto it = musicCache.find(filename); it != musicCache.end()) {
             return it->second.get();
         }
@@ -155,8 +168,7 @@ namespace GameEngine
         return musicPtr;
     }
 
-
-
+    // Методы очистки ресурсов
     void ResourceSystem::DeleteAllTextures()
     {
         for (auto& t : textures) delete t.second;
@@ -177,13 +189,12 @@ namespace GameEngine
     }
 
     void ResourceSystem::DeleteAllMusic() {
-        for (auto& m : musics) {
-            delete m.second;
-        }
+        for (auto& m : musics) delete m.second;
         musics.clear();
         musicCache.clear();
     }
 
+    // Полная очистка всех ресурсов
     void ResourceSystem::Clear()
     {
         DeleteAllTextures();

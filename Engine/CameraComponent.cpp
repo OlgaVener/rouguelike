@@ -16,6 +16,7 @@ namespace GameEngine
 		delete view;
 	}
 
+	// Метод обновления камеры (вызывается каждый кадр)
 	void CameraComponent::Update(float deltaTime)
 	{
 		auto position = transform->GetWorldPosition();
@@ -26,7 +27,8 @@ namespace GameEngine
 
 		window->setView(*view);
 	}
-
+	
+	// Метод рендеринга (в текущей реализации только проверяет наличие окна)
 	void CameraComponent::Render()
 	{
 		if (window == nullptr)
@@ -35,16 +37,19 @@ namespace GameEngine
 		}
 	}
 
+	// Установка базового разрешения камеры
 	void CameraComponent::SetBaseResolution(int width, int height)
 	{
 		view->reset(sf::FloatRect(0, 0, width, -height));
 	}
 
+	// Привязка окна рендеринга к камере
 	void CameraComponent::SetWindow(sf::RenderWindow* newWindow)
 	{
 		window = newWindow;
 	}
 
+	// Метод масштабирования (зумирования) камеры
 	void CameraComponent::ZoomBy(float newZoom)
 	{
 		if (newZoom <= 0)

@@ -14,6 +14,7 @@ LevelBuilder::~LevelBuilder() = default;
 
 void LevelBuilder::Start()
 {
+    //Размеры уровня
     int width = 15;
     int height = 15;
 
