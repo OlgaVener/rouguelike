@@ -18,7 +18,7 @@ void LoadGameResources()
 
     // Атлас полов
     res->LoadTextureMap(
-        "floors",
+        "floor",
         "Resources/Textures/floor.png",
         sf::Vector2u(128, 128),
         4,

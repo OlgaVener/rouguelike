@@ -7,13 +7,13 @@ namespace GameEngine
     class AudioEngine : public Component
     {
     public:
-        enum class AudioType { Sound, Music };
-
-        AudioEngine(GameObject* gameObject, AudioType type = AudioType::Sound);
+        AudioEngine(GameObject* gameObject);
         ~AudioEngine();
 
-        void SetAudio(const sf::SoundBuffer& audio);
-        void SetAudio(sf::Music* musicPtr);         
+        void Update(float deltaTime);
+        void Render();
+
+        void SetAudio(const sf::SoundBuffer& audio);       
 
         void SetLoop(bool loop);
         void SetVolume(float volume);
@@ -21,9 +21,9 @@ namespace GameEngine
         void Play();
         void Stop();
         void Pause();
+        void Resume();
 
     private:
-        AudioType type;
         sf::Sound* sound;
         sf::Music* music;
     };

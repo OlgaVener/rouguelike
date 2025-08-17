@@ -157,7 +157,6 @@
     <ClInclude Include="Math.h" />
     <ClInclude Include="MenuState.h" />
     <ClInclude Include="GameState.h" />
-    <ClInclude Include="Music.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="TextureManager.h" />
@@ -170,7 +169,6 @@
     <ClCompile Include="LevelBuilder.cpp" />
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="GameState.cpp" />
-    <ClCompile Include="Music.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="TextureManager.cpp" />

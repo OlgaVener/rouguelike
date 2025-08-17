@@ -14,18 +14,6 @@ LevelBuilder::~LevelBuilder() = default;
 
 void LevelBuilder::Start()
 {
-    auto res = ResourceSystem::Instance();
-
-    // Загружаем тайлсеты (один раз)
-    if (!res->GetTextureMapElementShared("walls.png", 0))
-    {
-        res->LoadTextureMap("walls.png", "assets/walls.png", { 128, 128 }, 40, true);
-    }
-    if (!res->GetTextureMapElementShared("floor.png", 0))
-    {
-        res->LoadTextureMap("floor.png", "assets/floor.png", { 128, 128 }, 20, true);
-    }
-
     int width = 15;
     int height = 15;
 

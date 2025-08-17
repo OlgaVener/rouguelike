@@ -5,55 +5,74 @@
 
 namespace GameEngine
 {
-    AudioEngine::AudioEngine(GameObject* gameObject, AudioType type)
-        : Component(gameObject), type(type), sound(nullptr), music(nullptr)
+    AudioEngine::AudioEngine(GameObject* gameObject) 
+        : Component(gameObject)
     {
-        if (type == AudioType::Sound)
-            sound = new sf::Sound();
+        sound = new sf::Sound();
     }
 
+    //Очистка
     AudioEngine::~AudioEngine()
     {
-        if (sound) delete sound;
+        sound->stop();
+        delete sound;
     }
 
+    //Обновление
+    void AudioEngine::Update(float deltaTime)
+    {
+    }
+
+    //Визуализация
+    void AudioEngine::Render()
+    {
+    }
+
+    //Подключение аудио-файла
     void AudioEngine::SetAudio(const sf::SoundBuffer& audio)
     {
-        if (sound) sound->setBuffer(audio);
+        sound->setBuffer(audio);
     }
-
-    void AudioEngine::SetAudio(sf::Music* musicPtr)
-    {
-        music = musicPtr;
-    }
-
+    
+    //Зацикливание звука
     void AudioEngine::SetLoop(bool loop)
     {
-        if (type == AudioType::Sound && sound) sound->setLoop(loop);
-        if (type == AudioType::Music && music) music->setLoop(loop);
+        sound->setLoop(loop);
     }
 
+    //Настройка громкости
     void AudioEngine::SetVolume(float volume)
     {
-        if (type == AudioType::Sound && sound) sound->setVolume(volume);
-        if (type == AudioType::Music && music) music->setVolume(volume);
+        sound->setVolume(volume);
     }
 
+    //Воспроизведение
     void AudioEngine::Play()
     {
-        if (type == AudioType::Sound && sound) sound->play();
-        if (type == AudioType::Music && music) music->play();
+        if (sound->getStatus() != sf::SoundSource::Playing)
+        {
+            sound->play();
+        }
     }
 
+    //Остановка
     void AudioEngine::Stop()
     {
-        if (type == AudioType::Sound && sound) sound->stop();
-        if (type == AudioType::Music && music) music->stop();
+        sound->stop();
     }
 
+    //Пауза
     void AudioEngine::Pause()
     {
-        if (type == AudioType::Sound && sound) sound->pause();
-        if (type == AudioType::Music && music) music->pause();
+        sound->pause();
+    }
+
+    //Продолжить
+    void AudioEngine::Resume()
+    {
+        if (sound->getStatus() != sf::SoundSource::Playing)
+        {
+            sound->play();
+        }
     }
 }

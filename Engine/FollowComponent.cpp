@@ -2,6 +2,7 @@
 #include "FollowComponent.h"
 #include <iostream>
 
+//Перемещение и отрисовка объекта
 GameEngine::FollowComponent::FollowComponent(GameObject* gameObject)
 	: Component(gameObject)
 {
@@ -14,6 +15,7 @@ GameEngine::FollowComponent::FollowComponent(GameObject* gameObject)
 	}
 }
 
+//Цель для слежки
 void GameEngine::FollowComponent::SetTarget(GameObject* targetObject)
 {
 	if (targetObject)
@@ -26,6 +28,7 @@ void GameEngine::FollowComponent::SetTarget(GameObject* targetObject)
 	}
 }
 
+//Обновление каждого кадра позиции
 void GameEngine::FollowComponent::Update(float deltaTime)
 {
 	if (transform == nullptr || targetTransform == nullptr) return;
@@ -48,12 +51,13 @@ void GameEngine::FollowComponent::Update(float deltaTime)
 	}
 }
 
+//Отрисовка
 void GameEngine::FollowComponent::Render()
 {
 
 }
 
-
+//Настройка скорости передвижения
 void GameEngine::FollowComponent::SetSpeed(float newSpeed)
 {
 

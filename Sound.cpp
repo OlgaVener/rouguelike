@@ -6,7 +6,7 @@ namespace RoguelikeGame
     Sound::Sound(const std::string& soundName)
     {
         gameObject = new GameEngine::GameObject();
-        audioEngine = new GameEngine::AudioEngine(gameObject, GameEngine::AudioEngine::AudioType::Sound);
+        audioEngine = new GameEngine::AudioEngine(gameObject);
 
         auto soundBuffer = GameEngine::ResourceSystem::Instance()->GetSoundBuffer(soundName);
         if (soundBuffer)
