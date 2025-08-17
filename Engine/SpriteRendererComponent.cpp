@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GameObject.h"
+#include "Logger.h"
 #include "TransformComponent.h"
 #include "SpriteRendererComponent.h"
 #include "RenderSystem.h"
@@ -22,10 +23,10 @@ namespace GameEngine
         isFlipX(false),                         // Флаг отражения по X
         isFlipY(false)                         // Флаг отражения по Y
     {
-        if (!sprite)
-        {
+        if (!sprite) {
             throw std::runtime_error("Failed to create sprite!");
         }
+        std::cout << "SpriteRenderer created for: " << gameObject->GetName() << std::endl;
         sprite->setScale(scale.x, scale.y);     // Установка начального масштаба
     }
 
@@ -36,18 +37,24 @@ namespace GameEngine
     }
 
     // Установка текстуры для спрайта
-    void SpriteRendererComponent::SetTexture(const sf::Texture* newTexture)
-    {
-        if (!sprite || !newTexture)  // Проверка валидности указателей
-        {
+    void SpriteRendererComponent::SetTexture(const sf::Texture* newTexture) {
+        if (!newTexture) {
+            LOG_ERROR("Attempt to set null texture for: " + gameObject->GetName());
             return;
         }
 
-        sprite->setTexture(*newTexture, true);  // Применение текстуры
+        if (!sprite) {
+            LOG_ERROR("Sprite not initialized for: " + gameObject->GetName());
+            return;
+        }
 
-        // Установка центра спрайта в центр текстуры
-        auto textureSize = newTexture->getSize();
-        sprite->setOrigin(textureSize.x * 0.5f, textureSize.y * 0.5f);
+        auto texSize = newTexture->getSize();
+        LOG_INFO("Setting texture for: " + gameObject->GetName() +
+            " Texture size: " + std::to_string(texSize.x) +
+            "x" + std::to_string(texSize.y));
+
+        sprite->setTexture(*newTexture, true);
+        sprite->setOrigin(texSize.x * 0.5f, texSize.y * 0.5f);
     }
 
     // Установка размера спрайта в пикселях

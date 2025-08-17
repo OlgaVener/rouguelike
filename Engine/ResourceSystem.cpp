@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ResourceSystem.h"
+#include "Logger.h"
 #include <iostream>
 #include <filesystem>
 
@@ -13,17 +14,61 @@ namespace GameEngine
     }
 
     // Загрузка текстуры из файла
-    void ResourceSystem::LoadTexture(const std::string& name, const std::string& sourcePath, bool isSmooth)
-    {
+    void ResourceSystem::LoadTexture(const std::string& name, const std::string& sourcePath, bool isSmooth) {
+        // Логирование попытки загрузки текстуры
+        LOG_INFO("Attempting to load texture: " + name + " from: " + sourcePath);
+
+        // Проверка существования файла
+        if (!std::filesystem::exists(sourcePath)) {
+            LOG_ERROR("Texture file not found: " + sourcePath);
+            return;
+        }
+
+        // Попытка загрузки изображения
+        sf::Image img;
+        if (!img.loadFromFile(sourcePath)) {
+            LOG_ERROR("Failed to load image data from: " + sourcePath);
+            return;
+        }
+
+        // Логирование информации о изображении
+        LOG_INFO("Image loaded. Size: " + std::to_string(img.getSize().x) +
+            "x" + std::to_string(img.getSize().y) +
+            " Channels: " + std::to_string(img.getPixel(0, 0).a));
+
+        // Создание текстуры
         auto texture = new sf::Texture();
-        if (!texture->loadFromFile(sourcePath))
-        {
-            std::cerr << "No texture " << sourcePath << std::endl;
+        if (!texture->loadFromImage(img)) {
+            LOG_ERROR("Failed to create texture from image. Possible reasons:");
+            LOG_ERROR("- Invalid image dimensions");
+            LOG_ERROR("- Unsupported pixel format");
+            LOG_ERROR("- Driver/hardware limitations");
             delete texture;
             return;
         }
-        texture->setSmooth(isSmooth); // Настройка сглаживания
-        textures[name] = texture;     // Сохранение в контейнер
+
+        // Проверка размера текстуры
+        auto texSize = texture->getSize();
+        if (texSize.x == 0 || texSize.y == 0) {
+            LOG_ERROR("Created texture has zero size: " + std::to_string(texSize.x) +
+                "x" + std::to_string(texSize.y));
+            delete texture;
+            return;
+        }
+
+        if (texSize.x > 32768 || texSize.y > 32768) {
+            LOG_ERROR("Texture exceeds maximum size: " + std::to_string(texSize.x) +
+                "x" + std::to_string(texSize.y));
+            delete texture;
+            return;
+        }
+
+        texture->setSmooth(isSmooth);
+        textures[name] = texture;
+
+        LOG_INFO("Texture successfully loaded: " + name +
+            " Size: " + std::to_string(texSize.x) +
+            "x" + std::to_string(texSize.y));
     }
 
     // Получение указателя на текстуру (без передачи владения)

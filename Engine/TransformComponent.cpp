@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "TransformComponent.h"
+#include "Logger.h"
 #include "GameObject.h"
 
 namespace GameEngine
@@ -149,8 +150,18 @@ namespace GameEngine
         isUpdated = true;
     }
 
-    void TransformComponent::SetLocalScale(float scaleX, float scaleY)
-    {
+    void TransformComponent::SetLocalScale(float scaleX, float scaleY) {
+        if (scaleX == 0 || scaleY == 0) {
+            LOG_WARN("Attempt to set zero scale for: " + gameObject->GetName() +
+                " X: " + std::to_string(scaleX) +
+                " Y: " + std::to_string(scaleY));
+            return;
+        }
+
+        LOG_INFO("Setting scale for: " + gameObject->GetName() +
+            " X: " + std::to_string(scaleX) +
+            " Y: " + std::to_string(scaleY));
+
         localScale.x = scaleX;
         localScale.y = scaleY;
         isUpdated = false;
