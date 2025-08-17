@@ -15,15 +15,23 @@ LevelBuilder::~LevelBuilder() = default;
 void LevelBuilder::Start()
 {
     //Размеры уровня
-    int width = 15;
+    int width = 20;
     int height = 15;
+    const float tileSize = 128.f;
 
     // === 1. Заполняем пол ===
-    for (int y = 0; y < height; ++y)
-    {
-        for (int x = 0; x < width; ++x)
-        {
-            floors.push_back(std::make_unique<Floor>(Vector2Df(x * 128.f, y * 128.f), 0));
+    float startX = (1280 - width * tileSize) / 2; // Центрирование по горизонтали
+    float startY = (720 - height * tileSize) / 2; // Центрирование по вертикали
+
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            // Рассчитываем позицию с учётом центрирования
+            Vector2Df position(
+                startX + x * tileSize + tileSize / 2, // +tileSize/2 для центрирования
+                startY + y * tileSize + tileSize / 2
+            );
+
+            floors.push_back(std::make_unique<Floor>(position, 0));
         }
     }
 

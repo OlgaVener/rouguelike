@@ -7,7 +7,7 @@ namespace GameEngine
 {
 	CameraComponent::CameraComponent(GameObject* gameObject) : Component(gameObject)
 	{
-		view = new sf::View(sf::FloatRect(0, 0, 800, -600));
+		view = new sf::View(sf::FloatRect(0, 0, 1280, 720));
 		transform = gameObject->GetComponent<TransformComponent>();
 	}	
 
