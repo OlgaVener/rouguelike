@@ -90,23 +90,31 @@ namespace GameEngine
     }
 
     // Отрисовка спрайта
-    void SpriteRendererComponent::Render()
+    void SpriteRendererComponent::Render() 
     {
-        if (sprite && transform && sprite->getTexture())
-        {
-            // Установка поворота из трансформации
-            sprite->setRotation(transform->GetWorldRotation());
+        if (!sprite || !transform) return;
 
-            // Обновление масштаба с учетом трансформации и отражений
-            auto transformScale = Convert<sf::Vector2f, Vector2Df>(transform->GetWorldScale());
-            sprite->setScale({
-                scale.x * transformScale.x * (isFlipX ? -1.f : 1.f),
-                scale.y * transformScale.y * (isFlipY ? -1.f : 1.f)
-                });
-
-            // Передача спрайта в систему рендеринга
-            RenderSystem::Instance()->Render(*sprite);
+        // Для отладки - рисуем красный квадрат если нет текстуры
+        if (!sprite->getTexture()) {
+            sf::RectangleShape debugRect(sf::Vector2f(128, 128));
+            debugRect.setFillColor(sf::Color::Red);
+            debugRect.setPosition(Convert<sf::Vector2f, Vector2Df>(transform->GetWorldPosition()));
+            debugRect.setOrigin(64, 64);
+            RenderSystem::Instance()->Render(debugRect);
+            return;
         }
+
+        // Нормальный рендеринг
+        sprite->setPosition(Convert<sf::Vector2f, Vector2Df>(transform->GetWorldPosition()));
+        sprite->setRotation(transform->GetWorldRotation());
+
+        auto transformScale = Convert<sf::Vector2f, Vector2Df>(transform->GetWorldScale());
+        sprite->setScale({
+            scale.x * transformScale.x * (isFlipX ? -1.f : 1.f),
+            scale.y * transformScale.y * (isFlipY ? -1.f : 1.f)
+            });
+
+        RenderSystem::Instance()->Render(*sprite);
     }
 
     // Получение указателя на SFML спрайт

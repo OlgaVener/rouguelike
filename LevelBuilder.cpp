@@ -17,6 +17,8 @@ void LevelBuilder::Start()
     //Размеры уровня
     int width = 20;
     int height = 15;
+    const int topBottomWallTexture = 38;
+    const int sideWallTexture = 12;
     const float tileSize = 128.f;
 
     // === 1. Заполняем пол ===
@@ -36,16 +38,36 @@ void LevelBuilder::Start()
     }
 
     // === 2. Периметр стен ===
-    for (int x = 0; x < width; ++x)
-    {
-        walls.push_back(std::make_unique<Wall>(Vector2Df(x * 128.f, 0.f), 38));                // верх
-        walls.push_back(std::make_unique<Wall>(Vector2Df(x * 128.f, (height - 1) * 128.f), 38)); // низ
+         // Верхние и нижние стены
+    for (int x = 0; x < width; ++x) {
+        // Верхняя стена
+        walls.push_back(std::make_unique<Wall>(
+            Vector2Df(startX + x * tileSize + tileSize / 2, startY + tileSize / 2),
+            topBottomWallTexture
+        ));
+
+        // Нижняя стена
+        walls.push_back(std::make_unique<Wall>(
+            Vector2Df(startX + x * tileSize + tileSize / 2, startY + (height - 1) * tileSize + tileSize / 2),
+            topBottomWallTexture
+        ));
     }
-    for (int y = 0; y < height; ++y)
-    {
-        walls.push_back(std::make_unique<Wall>(Vector2Df(0.f, y * 128.f), 12));                 // слева
-        walls.push_back(std::make_unique<Wall>(Vector2Df((width - 1) * 128.f, y * 128.f), 12)); // справа
+
+    // Боковые стены
+    for (int y = 1; y < height - 1; ++y) {
+        // Левая стена
+        walls.push_back(std::make_unique<Wall>(
+            Vector2Df(startX + tileSize / 2, startY + y * tileSize + tileSize / 2),
+            sideWallTexture
+        ));
+
+        // Правая стена
+        walls.push_back(std::make_unique<Wall>(
+            Vector2Df(startX + (width - 1) * tileSize + tileSize / 2, startY + y * tileSize + tileSize / 2),
+            sideWallTexture
+        ));
     }
+
 
     // === 3. Игрок ===
     player = std::make_shared<RoguelikeGame::Player>();
