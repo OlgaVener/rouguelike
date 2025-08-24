@@ -93,7 +93,6 @@ namespace GameEngine
     {
         if (!sprite || !transform) return;
 
-        // ѕросто устанавливаем позицию и рисуем
         sprite->setPosition(
             transform->GetWorldPosition().x,
             transform->GetWorldPosition().y
