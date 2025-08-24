@@ -7,7 +7,6 @@ namespace GameEngine
 {
     CameraComponent::CameraComponent(GameObject* gameObject) : Component(gameObject)
     {
-        // ПРАВИЛЬНОЕ создание view - центр и размер
         view = new sf::View(sf::Vector2f(640, 360), sf::Vector2f(1280, 720));
         //transform = gameObject->GetComponent<TransformComponent>();
         window = nullptr;

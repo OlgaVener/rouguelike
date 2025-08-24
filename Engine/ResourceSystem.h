@@ -29,6 +29,7 @@ namespace GameEngine
 
         // --- Звуки ---
         void LoadSoundBuffer(const std::string& name, const std::string& sourcePath);
+        void LoadAllSounds();
         const sf::SoundBuffer* GetSoundBuffer(const std::string& name) const;
 
         // --- Музыка ---

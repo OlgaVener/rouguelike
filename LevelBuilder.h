@@ -16,6 +16,7 @@ namespace GameEngine
         ~LevelBuilder();
 
         void Start();
+        void InitializeAudio();
         void Restart();
         void Stop();
 

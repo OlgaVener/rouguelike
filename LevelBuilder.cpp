@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "AudioEngine.h"
+#include "AudioManager.h"
 #include "GameWorld.h"
 #include "ResourceSystem.h"
 #include <Logger.h>
@@ -87,6 +88,21 @@ void LevelBuilder::Start()
 
     // === 5. Аудио ===
     audio = std::make_unique<AudioEngine>(player->GetGameObject());
+    InitializeAudio();
+}
+
+void LevelBuilder::InitializeAudio()
+{
+    // Загружаем звуки в ресурсную систему
+    GameEngine::ResourceSystem::Instance()->LoadAllSounds();
+
+    // Инициализируем аудио менеджер
+    AudioManager::Instance().Initialize();
+
+    // Запускаем фоновую музыку
+    AudioManager::Instance().PlayBackgroundMusic();
+
+    std::cout << "Audio system initialized" << std::endl;
 }
 
 void LevelBuilder::Restart()
@@ -97,5 +113,6 @@ void LevelBuilder::Restart()
 
 void LevelBuilder::Stop()
 {
+    AudioManager::Instance().StopAllSounds();
     GameWorld::Instance()->Clear();
 }

@@ -208,6 +208,25 @@ namespace GameEngine
         soundBuffers[name] = buffer; // Сохранение в контейнер
     }
 
+    void ResourceSystem::LoadAllSounds()
+    {
+        // Фоновая музыка
+        LoadSoundBuffer("background_music", "Resources/Sounds/main_theme.wav");
+
+        // Звуки игрока
+        LoadSoundBuffer("player_step", "Resources/Sounds/step.wav");
+        LoadSoundBuffer("player_attack", "Resources/Sounds/attack.wav");
+        LoadSoundBuffer("player_hit", "Resources/Sounds/hit.wav");
+
+        // Звуки врага
+        LoadSoundBuffer("enemy_attack", "Resources/Sounds/enemy_attack.wav");
+        LoadSoundBuffer("enemy_death", "Resources/Sounds/enemy_death.wav");
+
+        // Звуки окружающей среды
+        LoadSoundBuffer("wall_hit", "Resources/Sounds/wall_hit.wav");
+        LoadSoundBuffer("door_open", "Resources/Sounds/door.wav");
+    }
+
     // Получение звукового буфера
     const sf::SoundBuffer* ResourceSystem::GetSoundBuffer(const std::string& name) const
     {
