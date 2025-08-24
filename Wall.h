@@ -11,6 +11,7 @@ namespace RoguelikeGame
 	class Wall
 	{
 	public:
+		~Wall();
 		Wall(const GameEngine::Vector2Df position, int textureMapIndex);
 		GameEngine::GameObject* GetGameObject() const { return gameObject; }
 	private:

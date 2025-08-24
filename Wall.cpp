@@ -1,4 +1,4 @@
-#include "Wall.h"
+п»ї#include "Wall.h"
 #include "SpriteRendererComponent.h"
 #include "RigidbodyComponent.h"
 #include "SpriteColliderComponent.h"
@@ -6,7 +6,16 @@
 #include "ResourceSystem.h"
 #include "Logger.h"
 
-namespace RoguelikeGame {
+namespace RoguelikeGame 
+{
+    Wall::~Wall()
+    {
+        if (texture) {
+            delete texture;
+            texture = nullptr;
+        }
+    }
+
     Wall::Wall(const GameEngine::Vector2Df position, int textureMapIndex)
         : texture(nullptr)
     {
@@ -15,13 +24,10 @@ namespace RoguelikeGame {
         transform->SetWorldPosition(position);
         transform->SetWorldScale(GameEngine::Vector2Df(1.f, 1.f));
 
-        // Простое создание текстуры
+        texture = new sf::Texture();
 
-        sf::Texture* texture = new sf::Texture();
-
-        // Пробуем загрузить настоящую текстуру
+        // РџСЂРѕР±СѓРµРј Р·Р°РіСЂСѓР·РёС‚СЊ РЅР°СЃС‚РѕСЏС‰СѓСЋ С‚РµРєСЃС‚СѓСЂСѓ
         if (!texture->loadFromFile("Resources/Textures/walls.png")) {
-            // Fallback: если файл не найден, создаем тестовую текстуру
             std::cout << "Wall texture not found, using fallback" << std::endl;
             if (texture->create(128, 128)) {
                 sf::Image image;
