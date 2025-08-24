@@ -33,7 +33,7 @@ namespace RoguelikeGame
 
         auto renderer = gameObject->AddComponent<GameEngine::SpriteRendererComponent>();
         renderer->SetTexture(texture);
-        renderer->SetPixelSize(100, 100);
+        renderer->SetPixelSize(42, 42);
 
         // Преследование игрока
         auto follower = gameObject->AddComponent<GameEngine::FollowComponent>();

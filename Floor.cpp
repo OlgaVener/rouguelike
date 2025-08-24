@@ -15,5 +15,5 @@ RoguelikeGame::Floor::Floor(const GameEngine::Vector2D<float>& position, int tex
     //«агрузка текстуры по заданному индексу
     auto renderer = gameObject->AddComponent<GameEngine::SpriteRendererComponent>();
     renderer->SetTexture(GameEngine::ResourceSystem::Instance()->GetTextureMapElementShared("floor", textureMapIndex));
-    renderer->SetPixelSize(128, 128);
+    renderer->SetPixelSize(64, 64);
 }

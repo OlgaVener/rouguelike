@@ -15,39 +15,39 @@ LevelBuilder::~LevelBuilder() = default;
 
 void LevelBuilder::Start()
 {
-    //Размеры уровня
-    int width = 20;
-    int height = 15;
+    const float tileSize = 64.f;
+    int width = 20;    // 20 * 64 = 1280 (ровно по ширине)
+    int height = 11;   // 11 * 64 = 704 (больше 720, но уберем отступы)
+
+    // УБИРАЕМ отступы полностью - начинаем с самого верха!
+    float startX = 0;
+    float startY = 0;  // Начинаем с самого верха, нижняя часть будет обрезана
+
     const int topBottomWallTexture = 38;
     const int sideWallTexture = 12;
-    const float tileSize = 128.f;
 
     // === 1. Заполняем пол ===
-    float startX = (1280 - width * tileSize) / 2; // Центрирование по горизонтали
-    float startY = (720 - height * tileSize) / 2; // Центрирование по вертикали
-
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
-            // Рассчитываем позицию с учётом центрирования
             Vector2Df position(
-                startX + x * tileSize + tileSize / 2, // +tileSize/2 для центрирования
+                startX + x * tileSize + tileSize / 2,
                 startY + y * tileSize + tileSize / 2
             );
-
             floors.push_back(std::make_unique<Floor>(position, 0));
         }
     }
 
     // === 2. Периметр стен ===
-         // Верхние и нижние стены
+    // Верхние стены
     for (int x = 0; x < width; ++x) {
-        // Верхняя стена
         walls.push_back(std::make_unique<Wall>(
-            Vector2Df(startX + x * tileSize + tileSize / 2, startY - tileSize / 2),
+            Vector2Df(startX + x * tileSize + tileSize / 2, startY + tileSize / 2),
             topBottomWallTexture
         ));
+    }
 
-        // Нижняя стена
+    // Нижние стены  
+    for (int x = 0; x < width; ++x) {
         walls.push_back(std::make_unique<Wall>(
             Vector2Df(startX + x * tileSize + tileSize / 2, startY + (height - 1) * tileSize + tileSize / 2),
             topBottomWallTexture
@@ -69,14 +69,21 @@ void LevelBuilder::Start()
         ));
     }
 
-    // === 3. Игрок ===
+    // === 3. Игрок в центре комнаты ===
     player = std::make_shared<RoguelikeGame::Player>();
+    auto playerTransform = player->GetGameObject()->GetComponent<TransformComponent>();
+
+    float playerX = startX + (width * tileSize) / 2;
+    float playerY = startY + (height * tileSize) / 2;
+
+    playerTransform->SetWorldPosition(Vector2Df(playerX, playerY));
 
     // === 4. Враг ===
     ai = std::make_shared<RoguelikeGame::EnemyAI>(
-        Vector2Df(width / 3.f * 128.f, height / 3.f * 128.f),
+        Vector2Df(startX + tileSize * 2, startY + tileSize * 2),
         player->GetGameObject()
     );
+
 
     // === 5. Аудио ===
     audio = std::make_unique<AudioEngine>(player->GetGameObject());

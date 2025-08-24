@@ -29,16 +29,16 @@ namespace RoguelikeGame
         // Пробуем загрузить настоящую текстуру
         if (!texture->loadFromFile("Resources/Textures/walls.png")) {
             std::cout << "Wall texture not found, using fallback" << std::endl;
-            if (texture->create(128, 128)) {
+            if (texture->create(64, 64)) {
                 sf::Image image;
-                image.create(128, 128, sf::Color::Cyan);
+                image.create(64, 64, sf::Color::Cyan);
                 texture->loadFromImage(image);
             }
         }
 
         auto renderer = gameObject->AddComponent<GameEngine::SpriteRendererComponent>();
         renderer->SetTexture(texture);
-        renderer->SetPixelSize(128, 128);
+        renderer->SetPixelSize(64, 64);
 
         auto collider = gameObject->AddComponent<GameEngine::SpriteColliderComponent>();
         auto rigidbody = gameObject->AddComponent<GameEngine::RigidbodyComponent>();

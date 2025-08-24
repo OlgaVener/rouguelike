@@ -15,7 +15,7 @@ namespace RoguelikeGame
 
         //Добавляем текстуру для рендера и задаём размер
         playerRenderer->SetTexture(GameEngine::ResourceSystem::Instance()->GetTextureShared("ball"));
-        playerRenderer->SetPixelSize(32, 32);
+        playerRenderer->SetPixelSize(42, 42);
 
         //Добавляем и настраиваем камеру
         auto playerCamera = gameObject->AddComponent<GameEngine::CameraComponent>();
