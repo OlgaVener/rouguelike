@@ -6,6 +6,7 @@
 #include "AudioEngine.h"
 #include "GameWorld.h"
 #include "ResourceSystem.h"
+#include <Logger.h>
 
 using namespace RoguelikeGame;
 using namespace GameEngine;
@@ -42,7 +43,7 @@ void LevelBuilder::Start()
     for (int x = 0; x < width; ++x) {
         // Верхняя стена
         walls.push_back(std::make_unique<Wall>(
-            Vector2Df(startX + x * tileSize + tileSize / 2, startY + tileSize / 2),
+            Vector2Df(startX + x * tileSize + tileSize / 2, startY - tileSize / 2),
             topBottomWallTexture
         ));
 
@@ -67,7 +68,6 @@ void LevelBuilder::Start()
             sideWallTexture
         ));
     }
-
 
     // === 3. Игрок ===
     player = std::make_shared<RoguelikeGame::Player>();

@@ -15,5 +15,6 @@ namespace RoguelikeGame
 		GameEngine::GameObject* GetGameObject() const { return gameObject; }
 	private:
 		GameEngine::GameObject* gameObject;
+		sf::Texture* texture;
 	};
 }

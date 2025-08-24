@@ -8,20 +8,26 @@
 
 namespace RoguelikeGame {
     Wall::Wall(const GameEngine::Vector2Df position, int textureMapIndex)
-        : gameObject(nullptr)
+        : texture(nullptr)
     {
         gameObject = GameEngine::GameWorld::Instance()->CreateGameObject("Wall");
         auto transform = gameObject->GetComponent<GameEngine::TransformComponent>();
         transform->SetWorldPosition(position);
         transform->SetWorldScale(GameEngine::Vector2Df(1.f, 1.f));
 
-        // Загрузка текстуры с проверкой
-        auto texture = GameEngine::ResourceSystem::Instance()->GetTextureMapElementShared("walls", textureMapIndex);
-        if (!texture || texture->getSize().x == 0 || texture->getSize().y == 0)
-        {
-            LOG_ERROR("Failed to load wall texture! Index: " + std::to_string(textureMapIndex));
-            // Загружаем текстуру по умолчанию
-            texture = GameEngine::ResourceSystem::Instance()->GetTextureMapElementShared("default", 0);
+        // Простое создание текстуры
+
+        sf::Texture* texture = new sf::Texture();
+
+        // Пробуем загрузить настоящую текстуру
+        if (!texture->loadFromFile("Resources/Textures/walls.png")) {
+            // Fallback: если файл не найден, создаем тестовую текстуру
+            std::cout << "Wall texture not found, using fallback" << std::endl;
+            if (texture->create(128, 128)) {
+                sf::Image image;
+                image.create(128, 128, sf::Color::Cyan);
+                texture->loadFromImage(image);
+            }
         }
 
         auto renderer = gameObject->AddComponent<GameEngine::SpriteRendererComponent>();

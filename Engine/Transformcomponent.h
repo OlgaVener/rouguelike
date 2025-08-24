@@ -32,20 +32,20 @@ namespace GameEngine {
         void SetLocalScale(const Vector2Df& scale);
         void SetLocalScale(float scaleX, float scaleY);
 
-        const Vector2Df& GetWorldPosition() const;
-        const Vector2Df& GetLocalPosition() const;
+        const Vector2Df& GetWorldPosition();
+        const Vector2Df& GetLocalPosition();
 
-        const float GetWorldRotation() const;
-        const float GetLocalRotation() const;
+        const float GetWorldRotation();
+        const float GetLocalRotation();
         
-        const Vector2Df& GetWorldScale() const;
-        const Vector2Df& GetLocalScale() const;
+        const Vector2Df& GetWorldScale();
+        const Vector2Df& GetLocalScale();
 
         void SetParent(TransformComponent* newParent);
         TransformComponent* GetParent() const;
 
         const Matrix2D GetWorldTransform() const;
-        void Print() const;
+        void Print();
 
     private:
         TransformComponent* parent = nullptr;

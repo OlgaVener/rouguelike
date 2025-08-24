@@ -151,24 +151,27 @@ namespace GameEngine
     }
 
     void TransformComponent::SetLocalScale(float scaleX, float scaleY) {
+        // Устанавливаем минимальный масштаб вместо возврата
+        float safeScaleX = (scaleX == 0) ? 0.001f : scaleX;
+        float safeScaleY = (scaleY == 0) ? 0.001f : scaleY;
+
         if (scaleX == 0 || scaleY == 0) {
-            LOG_WARN("Attempt to set zero scale for: " + gameObject->GetName() +
+            LOG_WARN("Zero scale corrected for: " + gameObject->GetName() +
                 " X: " + std::to_string(scaleX) +
                 " Y: " + std::to_string(scaleY));
-            return;
         }
 
         LOG_INFO("Setting scale for: " + gameObject->GetName() +
-            " X: " + std::to_string(scaleX) +
-            " Y: " + std::to_string(scaleY));
+            " X: " + std::to_string(safeScaleX) +
+            " Y: " + std::to_string(safeScaleY));
 
-        localScale.x = scaleX;
-        localScale.y = scaleY;
+        localScale.x = safeScaleX;
+        localScale.y = safeScaleY;
         isUpdated = false;
     }
 
     // === Методы получения параметров ===
-    const Vector2Df& TransformComponent::GetWorldPosition() const
+    const Vector2Df& TransformComponent::GetWorldPosition()
     {
         updateLocalTransform();
         if (parent == nullptr)
@@ -180,13 +183,13 @@ namespace GameEngine
         return position;
     }
 
-    const Vector2Df& TransformComponent::GetLocalPosition() const
+    const Vector2Df& TransformComponent::GetLocalPosition()
     {
         updateLocalTransform();
         return localPosition;
     }
 
-    const float TransformComponent::GetWorldRotation() const
+    const float TransformComponent::GetWorldRotation()
     {
         updateLocalTransform();
         if (parent == nullptr)
@@ -198,13 +201,13 @@ namespace GameEngine
         return rotation;
     }
 
-    const float TransformComponent::GetLocalRotation() const
+    const float TransformComponent::GetLocalRotation()
     {
         updateLocalTransform();
         return localRotation;
     }
 
-    const Vector2Df& TransformComponent::GetWorldScale() const
+    const Vector2Df& TransformComponent::GetWorldScale()
     {
         updateLocalTransform();
         if (parent == nullptr)
@@ -216,7 +219,7 @@ namespace GameEngine
         return scale;
     }
 
-    const Vector2Df& TransformComponent::GetLocalScale() const
+    const Vector2Df& TransformComponent::GetLocalScale()
     {
         updateLocalTransform();
         return localScale;
@@ -275,7 +278,7 @@ namespace GameEngine
     }
 
     // Вывод информации о трансформации
-    void TransformComponent::Print() const
+    void TransformComponent::Print()
     {
         std::cout << "Transform name: " << gameObject->GetName() << std::endl;
 
@@ -305,6 +308,9 @@ namespace GameEngine
         scale.y = std::sqrt(transform.GetMatrix()[0][1] * transform.GetMatrix()[0][1] +
             transform.GetMatrix()[1][1] * transform.GetMatrix()[1][1]);
 
+        if (scale.x == 0) scale.x = 1.f;
+        if (scale.y == 0) scale.y = 1.f;
+
         // Вычисление угла поворота
         rotation = std::atan2(transform.GetMatrix()[0][1], transform.GetMatrix()[0][0]) * 180 / 3.14159265;
     }
@@ -319,6 +325,9 @@ namespace GameEngine
             transform.GetMatrix()[1][0] * transform.GetMatrix()[1][0]);
         localScale.y = std::sqrt(transform.GetMatrix()[0][1] * transform.GetMatrix()[0][1] +
             transform.GetMatrix()[1][1] * transform.GetMatrix()[1][1]);
+
+        if (localScale.x == 0) localScale.x = 1.f;
+        if (localScale.y == 0) localScale.y = 1.f;
 
         localRotation = std::atan2(transform.GetMatrix()[0][1], transform.GetMatrix()[0][0]) * 180 / 3.14159265;
     }
@@ -345,22 +354,25 @@ namespace GameEngine
     Matrix2D TransformComponent::createTransform(const Vector2Df& position, float rotation, const Vector2Df& scale) const
     {
         Matrix2D transform;
-        float rad = rotation * 3.14159265f / 180.0f;  // Перевод градусов в радианы
+        float rad = rotation * 3.14159265f / 180.0f;
         float cosRot = cos(rad);
         float sinRot = sin(rad);
 
         auto& matrix = transform.GetMatrix();
 
-        // Заполнение матрицы 3x3:
-        matrix[0][0] = scale.x * cosRot;    // Масштаб X и поворот
-        matrix[0][1] = scale.x * -sinRot;    // Поворот с инверсией
-        matrix[1][0] = scale.y * sinRot;     // Поворот
-        matrix[1][1] = scale.y * cosRot;     // Масштаб Y и поворот
-        matrix[0][2] = position.x;           // Позиция X
-        matrix[1][2] = position.y;           // Позиция Y
-        matrix[2][0] = 0.0f;                 // Не используется в 2D
-        matrix[2][1] = 0.0f;                 // Не используется в 2D
-        matrix[2][2] = 1.0f;                 // Однородная координата
+        // Исправьте на нормальный масштаб
+        float safeScaleX = (scale.x == 0) ? 1.0f : scale.x;
+        float safeScaleY = (scale.y == 0) ? 1.0f : scale.y;
+
+        matrix[0][0] = safeScaleX * cosRot;
+        matrix[0][1] = safeScaleX * -sinRot;
+        matrix[1][0] = safeScaleY * sinRot;
+        matrix[1][1] = safeScaleY * cosRot;
+        matrix[0][2] = position.x;
+        matrix[1][2] = position.y;
+        matrix[2][0] = 0.0f;
+        matrix[2][1] = 0.0f;
+        matrix[2][2] = 1.0f;
 
         return transform;
     }

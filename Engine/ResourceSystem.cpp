@@ -82,27 +82,61 @@ namespace GameEngine
     void ResourceSystem::LoadTextureMap(const std::string& name, const std::string& sourcePath,
         sf::Vector2u elementPixelSize, int totalElements, bool isSmooth)
     {
+        // Проверка существования файла
+        if (!std::filesystem::exists(sourcePath)) {
+            LOG_ERROR("Texture map file not found: " + sourcePath);
+            return;
+        }
+
         sf::Texture bigTexture;
         if (!bigTexture.loadFromFile(sourcePath))
         {
-            std::cerr << "Textures not loaded: " << sourcePath << std::endl;
+            LOG_ERROR("Failed to load texture map: " + sourcePath);
             return;
         }
-        bigTexture.setSmooth(isSmooth);
+
+        // Проверка размеров
+        auto bigSize = bigTexture.getSize();
+        LOG_INFO("Loading texture map: " + name + " Size: " +
+            std::to_string(bigSize.x) + "x" + std::to_string(bigSize.y));
+
+        if (elementPixelSize.x == 0 || elementPixelSize.y == 0) {
+            LOG_ERROR("Invalid element size for texture map: " + name);
+            return;
+        }
 
         // Разделение большой текстуры на элементы
         std::vector<sf::Texture*> elements;
         for (int i = 0; i < totalElements; ++i)
         {
+            // Проверка, не выходим ли мы за границы текстуры
+            if ((i + 1) * elementPixelSize.x > bigSize.x) {
+                LOG_ERROR("Texture map element " + std::to_string(i) +
+                    " exceeds texture bounds in: " + name);
+                break;
+            }
+
             auto tex = new sf::Texture();
-            tex->loadFromImage(
+            if (!tex->loadFromImage(
                 bigTexture.copyToImage(),
                 sf::IntRect(i * elementPixelSize.x, 0, elementPixelSize.x, elementPixelSize.y)
-            );
+            )) {
+                LOG_ERROR("Failed to create texture map element " + std::to_string(i) +
+                    " for: " + name);
+                delete tex;
+                continue;
+            }
             tex->setSmooth(isSmooth);
             elements.push_back(tex);
+
+            LOG_INFO("Created texture map element: " + name + "[" + std::to_string(i) +
+                "] Size: " + std::to_string(elementPixelSize.x) +
+                "x" + std::to_string(elementPixelSize.y));
         }
-        textureMaps[name] = elements; // Сохранение набора текстур
+
+        textureMaps[name] = elements;
+        LOG_INFO("Texture map loaded: " + name + " with " +
+            std::to_string(elements.size()) + " elements");
     }
 
     // Создание копии текстуры (с передачей владения)

@@ -21,7 +21,7 @@ namespace GameEngine
 
         // --- Атласы ---
         void LoadTextureMap(const std::string& name, const std::string& sourcePath,
-            sf::Vector2u elementPixelSize, int totalElements, bool isSmooth = false);
+            sf::Vector2u elementPixelSize, int totalElements, bool isSmooth = true);
         const sf::Texture* GetTextureMapElementShared(const std::string& name, int elementIndex) const;
         sf::Texture* GetTextureMapElementCopy(const std::string& name, int elementIndex) const;
         int GetTextureMapElementsCount(const std::string& name) const;

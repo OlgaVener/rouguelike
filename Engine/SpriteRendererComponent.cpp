@@ -37,24 +37,23 @@ namespace GameEngine
     }
 
     // Установка текстуры для спрайта
-    void SpriteRendererComponent::SetTexture(const sf::Texture* newTexture) {
-        if (!newTexture) {
-            LOG_ERROR("Attempt to set null texture for: " + gameObject->GetName());
-            return;
-        }
+    void SpriteRendererComponent::SetTexture(const sf::Texture* newTexture)
+    {
+        if (!newTexture || !sprite) return;
 
-        if (!sprite) {
-            LOG_ERROR("Sprite not initialized for: " + gameObject->GetName());
-            return;
-        }
+        // Простая и надежная установка текстуры
+        sprite->setTexture(*newTexture);
 
-        auto texSize = newTexture->getSize();
-        LOG_INFO("Setting texture for: " + gameObject->GetName() +
-            " Texture size: " + std::to_string(texSize.x) +
-            "x" + std::to_string(texSize.y));
+        // Убедимся, что текстура не reset
+        sprite->setTextureRect(sf::IntRect(0, 0,
+            newTexture->getSize().x,
+            newTexture->getSize().y));
 
-        sprite->setTexture(*newTexture, true);
-        sprite->setOrigin(texSize.x * 0.5f, texSize.y * 0.5f);
+        // Центрируем спрайт
+        sprite->setOrigin(
+            newTexture->getSize().x / 2.0f,
+            newTexture->getSize().y / 2.0f
+        );
     }
 
     // Установка размера спрайта в пикселях
@@ -90,29 +89,15 @@ namespace GameEngine
     }
 
     // Отрисовка спрайта
-    void SpriteRendererComponent::Render() 
+    void SpriteRendererComponent::Render()
     {
         if (!sprite || !transform) return;
 
-        // Для отладки - рисуем красный квадрат если нет текстуры
-        if (!sprite->getTexture()) {
-            sf::RectangleShape debugRect(sf::Vector2f(128, 128));
-            debugRect.setFillColor(sf::Color::Red);
-            debugRect.setPosition(Convert<sf::Vector2f, Vector2Df>(transform->GetWorldPosition()));
-            debugRect.setOrigin(64, 64);
-            RenderSystem::Instance()->Render(debugRect);
-            return;
-        }
-
-        // Нормальный рендеринг
-        sprite->setPosition(Convert<sf::Vector2f, Vector2Df>(transform->GetWorldPosition()));
-        sprite->setRotation(transform->GetWorldRotation());
-
-        auto transformScale = Convert<sf::Vector2f, Vector2Df>(transform->GetWorldScale());
-        sprite->setScale({
-            scale.x * transformScale.x * (isFlipX ? -1.f : 1.f),
-            scale.y * transformScale.y * (isFlipY ? -1.f : 1.f)
-            });
+        // Просто устанавливаем позицию и рисуем
+        sprite->setPosition(
+            transform->GetWorldPosition().x,
+            transform->GetWorldPosition().y
+        );
 
         RenderSystem::Instance()->Render(*sprite);
     }
