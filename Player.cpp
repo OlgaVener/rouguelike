@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "ResourceSystem.h"
 #include "SpriteColliderComponent.h"
+#include <MovementComponent.h>
 
 namespace RoguelikeGame
 {
@@ -26,8 +27,8 @@ namespace RoguelikeGame
         auto playerInput = gameObject->AddComponent<GameEngine::InputComponent>();
 
         //движение и его скорость
-        //auto movement = gameObject->AddComponent<GameEngine::MovementComponent>();
-        //movement->SetSpeed(400.f);
+        auto movement = gameObject->AddComponent<GameEngine::MovementComponent>();
+        movement->SetSpeed(400.f);
 
         //Трансформация, поворот и размеры объекта
         auto transform = gameObject->GetComponent<GameEngine::TransformComponent>();

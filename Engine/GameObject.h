@@ -8,8 +8,8 @@
 
 namespace GameEngine
 {
-    class TransformComponent;
     class Component;
+    class TransformComponent;
 
     class GameObject
     {

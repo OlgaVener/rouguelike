@@ -38,7 +38,7 @@ namespace RoguelikeGame
         // Преследование игрока
         auto follower = gameObject->AddComponent<GameEngine::FollowComponent>();
         follower->SetTarget(player);
-        follower->SetSpeed(120.f);
+        follower->SetSpeed(220.f);
 
         // Физика
         auto rigidbody = gameObject->AddComponent<GameEngine::RigidbodyComponent>();

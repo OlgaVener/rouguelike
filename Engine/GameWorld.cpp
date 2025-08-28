@@ -11,11 +11,15 @@ namespace GameEngine
 	}
 	void GameWorld::Update(float deltaTime)
 	{
-		for (int i = 0; i < gameObjects.size(); ++i)
+		for (auto& gameObject : gameObjects)
 		{
-			gameObjects[i]->Update(deltaTime);
+			if (gameObject)
+			{
+				gameObject->Update(deltaTime);
+			}
 		}
 	}
+
 	void GameWorld::FixedUpdate(float deltaTime)
 	{
 		fixedCounter += deltaTime;

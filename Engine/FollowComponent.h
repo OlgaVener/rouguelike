@@ -22,6 +22,6 @@ namespace GameEngine
 		TransformComponent* targetTransform = nullptr;
 		SpriteRendererComponent* spriteRenderer = nullptr;
 
-		float speed = 100.f;
+		float speed = 250.f;
 	};
 }

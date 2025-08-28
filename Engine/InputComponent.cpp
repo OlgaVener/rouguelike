@@ -5,28 +5,28 @@ namespace GameEngine
 {
 	InputComponent::InputComponent(GameObject* gameObject) : Component(gameObject) {}
 
-	void InputComponent::Update(float deltatime)
-	{
-		verticalAxis = 0.f;
-		horizontalAxis = 0.f;
+    void InputComponent::Update(float deltatime)
+    {
+        verticalAxis = 0.f;
+        horizontalAxis = 0.f;
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		{
-			verticalAxis += 1.0f;
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		{
-			verticalAxis -= 1.0f;
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		{
-			horizontalAxis += 1.0f;
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		{
-			horizontalAxis -= 1.0f;
-		}
-	}
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+        {
+            verticalAxis -= 1.0f;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        {
+            verticalAxis += 1.0f;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        {
+            horizontalAxis += 1.0f;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        {
+            horizontalAxis -= 1.0f;
+        }
+    }
 
 	void InputComponent::Render()
 	{

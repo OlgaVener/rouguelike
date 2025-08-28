@@ -27,6 +27,7 @@ namespace GameEngine
         localPosition.x += offsetX;
         localPosition.y += offsetY;
         isUpdated = false;
+        updateLocalTransform();
     }
 
     // === Методы установки позиции ===
