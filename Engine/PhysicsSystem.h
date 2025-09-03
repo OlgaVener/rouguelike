@@ -1,33 +1,37 @@
 #pragma once
-#include "pch.h"
-#include <iostream>
+#include <vector>
+#include <SFML/Graphics.hpp>
 #include "ColliderComponent.h"
-#include "RigidbodyComponent.h"
-#include "Vector.h"
+#include "TransformComponent.h"
 #include "Trigger.h"
-#include "Collision.h"
+#include <RigidbodyComponent.h>
 
 namespace GameEngine
 {
-    class PhysicsSystem {
+    class PhysicsSystem
+    {
     public:
         static PhysicsSystem* Instance();
 
         void Update();
-
-        float GetFixedDeltaTime() const;
         void Subscribe(ColliderComponent* collider);
         void Unsubscribe(ColliderComponent* collider);
-    private:
-        PhysicsSystem() {}
-        ~PhysicsSystem() {}
 
-        PhysicsSystem(PhysicsSystem const&) = delete;
-        PhysicsSystem& operator= (PhysicsSystem const&) = delete;
+        float GetFixedDeltaTime() const;
+
+        void ResolveCollision(TransformComponent* movingTransform,
+            ColliderComponent* movingCollider,
+            ColliderComponent* staticCollider,
+            const sf::FloatRect& intersection,
+            float moveFactor);
+        void MoveWithCollision(RigidbodyComponent* rb, Vector2Df desiredMove);
+
+    private:
+        PhysicsSystem() = default;
 
         std::vector<ColliderComponent*> colliders;
-        std::map<ColliderComponent*, ColliderComponent*> triggersEnteredPair;
-
-        float fixedDeltaTime = 0.02f;
+        std::vector<std::pair<ColliderComponent*, ColliderComponent*>> triggersEnteredPair;
+        float fixedDeltaTime = 0.016f;
+        // 60 fps
     };
 }

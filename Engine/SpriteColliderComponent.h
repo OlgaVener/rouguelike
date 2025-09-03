@@ -12,7 +12,7 @@ namespace GameEngine
     {
     public:
         SpriteColliderComponent(GameObject* gameObject);
-        ~SpriteColliderComponent();
+        virtual ~SpriteColliderComponent();
 
         void Update(float deltaTime) override;
         void Render() override;

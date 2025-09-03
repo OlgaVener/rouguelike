@@ -2,6 +2,7 @@
 #include "ResourceSystem.h"
 #include "SpriteColliderComponent.h"
 #include <MovementComponent.h>
+#include <RigidbodyComponent.h>
 
 namespace RoguelikeGame
 {
@@ -10,6 +11,9 @@ namespace RoguelikeGame
         //Создаём объект и отрисовываем
         gameObject = GameEngine::GameWorld::Instance()->CreateGameObject();
         auto playerRenderer = gameObject->AddComponent<GameEngine::SpriteRendererComponent>();
+
+        auto rigidbody = gameObject->AddComponent<GameEngine::RigidbodyComponent>();
+        rigidbody->SetKinematic(false);
 
         //Добавляем коллизию
         auto collider = gameObject->AddComponent<GameEngine::SpriteColliderComponent>();

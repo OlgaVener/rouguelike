@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "FollowComponent.h"
 #include <SpriteColliderComponent.h>
+#include <RigidbodyComponent.h>
 
 namespace RoguelikeGame
 {

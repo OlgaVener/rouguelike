@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "SpriteColliderComponent.h"
+#include "TransformComponent.h"
+#include "SpriteRendererComponent.h"
+#include "RenderSystem.h"
 
 namespace GameEngine
 {
@@ -13,13 +16,12 @@ namespace GameEngine
     void SpriteColliderComponent::Update(float deltaTime)
     {
         auto spriteRenderer = gameObject->GetComponent<SpriteRendererComponent>();
-        if (spriteRenderer)
+        auto transform = gameObject->GetComponent<TransformComponent>();
+
+        if (spriteRenderer && spriteRenderer->GetSprite() && transform)
         {
             const sf::Sprite* sprite = spriteRenderer->GetSprite();
-            if (sprite)
-            {
-                bounds = sprite->getGlobalBounds();
-            }
+            bounds = sprite->getGlobalBounds();
         }
     }
 
@@ -29,7 +31,6 @@ namespace GameEngine
         if (!spriteRenderer || !spriteRenderer->GetSprite()) return;
 
         const sf::Sprite* sprite = spriteRenderer->GetSprite();
-
         sf::FloatRect localBounds = sprite->getLocalBounds();
 
         sf::RectangleShape rectangle;
@@ -38,10 +39,9 @@ namespace GameEngine
         rectangle.setPosition(sprite->getPosition());
         rectangle.setRotation(sprite->getRotation());
         rectangle.setScale(sprite->getScale());
-
         rectangle.setFillColor(sf::Color::Transparent);
         rectangle.setOutlineColor(sf::Color::White);
-        rectangle.setOutlineThickness(2.0f);
+        rectangle.setOutlineThickness(2.f);
 
         RenderSystem::Instance()->Render(rectangle);
     }
