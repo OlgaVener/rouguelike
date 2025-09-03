@@ -38,7 +38,7 @@ void LoadGameResources()
 int main()
 {
     RenderSystem::Instance()->SetMainWindow(
-        new sf::RenderWindow(sf::VideoMode(1280, 720), "Roguelike")
+        new sf::RenderWindow(sf::VideoMode(1280, 720), "Roguelike", sf::Style::Titlebar | sf::Style::Close)
     );
 
     LoadGameResources();

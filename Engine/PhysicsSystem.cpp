@@ -21,82 +21,65 @@ namespace GameEngine
 
     void PhysicsSystem::Update()
     {
-        for (size_t i = 0; i < colliders.size(); ++i)
-        {
-            auto* bodyA = colliders[i]->GetGameObject()->GetComponent<RigidbodyComponent>();
-            if (bodyA && bodyA->GetKinematic()) continue; // стены не двигаем
-
-            for (size_t j = 0; j < colliders.size(); ++j)
-            {
-                if (i == j) continue;
-
-                sf::FloatRect intersection;
-                if (colliders[i]->GetBounds().intersects(colliders[j]->GetBounds(), intersection))
-                {
-                    auto* aCollider = colliders[i];
-                    auto* bCollider = colliders[j];
-
-                    // Обработка триггеров
-                    if (aCollider->IsTrigger() || bCollider->IsTrigger())
-                    {
-                        Trigger trigger(aCollider, bCollider);
-                        aCollider->OnTriggerEnter(bCollider);
-                        bCollider->OnTriggerEnter(aCollider);
-
-                        triggersEnteredPair.emplace_back(aCollider, bCollider);
-                        continue;
-                    }
-
-                    // Коллизия
-                    auto* bBody = bCollider->GetGameObject()->GetComponent<RigidbodyComponent>();
-                    auto* aTransform = aCollider->GetGameObject()->GetComponent<TransformComponent>();
-
-                    if (bBody && bBody->GetKinematic())
-                    {
-                        // Двигаем только A
-                        if (intersection.width > intersection.height)
-                        {
-                            if (aCollider->GetBounds().top < bCollider->GetBounds().top)
-                                aTransform->MoveBy(0.f, -intersection.height);
-                            else
-                                aTransform->MoveBy(0.f, intersection.height);
-                        }
-                        else
-                        {
-                            if (aCollider->GetBounds().left < bCollider->GetBounds().left)
-                                aTransform->MoveBy(-intersection.width, 0.f);
-                            else
-                                aTransform->MoveBy(intersection.width, 0.f);
-                        }
-                    }
-
-                    // Вызов ResolveCollision (если есть реализация)
-                    ResolveCollision(aTransform, aCollider, bCollider, intersection, 1.f);
-                }
-            }
-        }
-
-        // Ограничение выхода за пределы окна
         sf::RenderWindow& window = RenderSystem::Instance()->GetMainWindow();
         sf::Vector2u winSize = window.getSize();
 
-        for (auto* collider : colliders)
+        for (auto* movingCollider : colliders)
         {
-            auto* rb = collider->GetGameObject()->GetComponent<RigidbodyComponent>();
-            if (!rb || rb->GetKinematic()) continue;
+            auto* rb = movingCollider->GetGameObject()->GetComponent<RigidbodyComponent>();
+            if (!rb || rb->GetKinematic()) continue; // стены не двигаем
 
-            auto* transform = collider->GetGameObject()->GetComponent<TransformComponent>();
-            auto bounds = collider->GetBounds();
+            auto* transform = movingCollider->GetGameObject()->GetComponent<TransformComponent>();
+            sf::FloatRect bounds = movingCollider->GetBounds();
 
-            if (bounds.left < 0) transform->MoveBy(-bounds.left, 0.f);
-            if (bounds.top < 0) transform->MoveBy(0.f, -bounds.top);
-            if (bounds.left + bounds.width > winSize.x)
-                transform->MoveBy(-(bounds.left + bounds.width - winSize.x), 0.f);
-            if (bounds.top + bounds.height > winSize.y)
-                transform->MoveBy(0.f, -(bounds.top + bounds.height - winSize.y));
+            // Двигаем по X
+            Vector2Df moveX(rb->GetLinearVelocity().x * GetFixedDeltaTime(), 0.f);
+            transform->MoveBy(moveX);
+
+            for (auto* staticCollider : colliders)
+            {
+                if (staticCollider == movingCollider) continue;
+                auto* staticRb = staticCollider->GetGameObject()->GetComponent<RigidbodyComponent>();
+                if (!staticRb || !staticRb->GetKinematic()) continue; // только стены
+
+                sf::FloatRect intersection;
+                if (movingCollider->GetBounds().intersects(staticCollider->GetBounds(), intersection))
+                {
+                    ResolveCollision(transform, movingCollider, staticCollider, intersection, 1.f);
+                }
+            }
+
+            // Двигаем по Y
+            Vector2Df moveY(0.f, rb->GetLinearVelocity().y * GetFixedDeltaTime());
+            transform->MoveBy(moveY);
+
+            for (auto* staticCollider : colliders)
+            {
+                if (staticCollider == movingCollider) continue;
+                auto* staticRb = staticCollider->GetGameObject()->GetComponent<RigidbodyComponent>();
+                if (!staticRb || !staticRb->GetKinematic()) continue; // только стены
+
+                sf::FloatRect intersection;
+                if (movingCollider->GetBounds().intersects(staticCollider->GetBounds(), intersection))
+                {
+                    ResolveCollision(transform, movingCollider, staticCollider, intersection, 1.f);
+                }
+            }
+
+            // Ограничение по границам уровня
+            bounds = movingCollider->GetBounds();
+            float levelLeft = 0.f;
+            float levelTop = 0.f;
+            float levelRight = 1280.f;
+            float levelBottom = 704.f;
+
+            if (bounds.left < levelLeft) transform->MoveBy(levelLeft - bounds.left, 0.f);
+            if (bounds.top < levelTop) transform->MoveBy(0.f, levelTop - bounds.top);
+            if (bounds.left + bounds.width > levelRight) transform->MoveBy(levelRight - (bounds.left + bounds.width), 0.f);
+            if (bounds.top + bounds.height > levelBottom) transform->MoveBy(0.f, levelBottom - (bounds.top + bounds.height));
         }
 
-        // Обработка выхода из триггеров
+        // Обработка триггеров (оставляем как есть)
         for (auto it = triggersEnteredPair.begin(); it != triggersEnteredPair.end();)
         {
             auto* first = it->first;
@@ -124,48 +107,67 @@ namespace GameEngine
         auto* collider = rb->GetGameObject()->GetComponent<ColliderComponent>();
         if (!transform || !collider) return;
 
-        sf::FloatRect originalBounds = collider->GetBounds();
-        Vector2Df move = desiredMove;
+        // --- Движение по X ---
+        float moveX = desiredMove.x;
+        transform->MoveBy(Vector2Df(moveX, 0.f));
 
-        // Проверяем столкновения со всеми коллайдерами
-        for (auto* otherCollider : colliders)
+        for (auto* wallCollider : colliders)
         {
-            if (otherCollider == collider) continue;
+            if (wallCollider == collider) continue;
 
-            auto* otherRigidbody = otherCollider->GetGameObject()->GetComponent<RigidbodyComponent>();
-            bool otherIsStatic = (otherRigidbody && otherRigidbody->GetKinematic());
+            auto* wallRb = wallCollider->GetGameObject()->GetComponent<RigidbodyComponent>();
+            if (!wallRb || !wallRb->GetKinematic()) continue; // только стены
 
-            if (!otherIsStatic) continue; // Сейчас проверяем только стены/статические объекты
-
+            sf::FloatRect playerBounds = collider->GetBounds();
+            sf::FloatRect wallBounds = wallCollider->GetBounds();
             sf::FloatRect intersection;
-            if (collider->GetBounds().intersects(otherCollider->GetBounds(), intersection))
+
+            if (playerBounds.intersects(wallBounds, intersection))
             {
-                // Простое разрешение коллизии по осям
-                if (intersection.width < intersection.height)
-                {
-                    desiredMove.x = (collider->GetBounds().left < otherCollider->GetBounds().left ? -intersection.width : intersection.width);
-                    desiredMove.y = 0.f;
-                }
+                // Отталкиваем по X
+                if (playerBounds.left < wallBounds.left)
+                    transform->MoveBy(-intersection.width, 0.f);
                 else
-                {
-                    desiredMove.y = (collider->GetBounds().top < otherCollider->GetBounds().top ? -intersection.height : intersection.height);
-                    desiredMove.x = 0.f;
-                }
+                    transform->MoveBy(intersection.width, 0.f);
             }
         }
 
-        // Двигаем трансформ с учётом коллизий
-        transform->MoveBy(move);
+        // --- Движение по Y ---
+        float moveY = desiredMove.y;
+        transform->MoveBy(Vector2Df(0.f, moveY));
 
-        // Ограничение выхода за границы окна
-        sf::RenderWindow& window = GameEngine::RenderSystem::Instance()->GetMainWindow();
-        sf::Vector2u winSize = window.getSize();
+        for (auto* wallCollider : colliders)
+        {
+            if (wallCollider == collider) continue;
+
+            auto* wallRb = wallCollider->GetGameObject()->GetComponent<RigidbodyComponent>();
+            if (!wallRb || !wallRb->GetKinematic()) continue; // только стены
+
+            sf::FloatRect playerBounds = collider->GetBounds();
+            sf::FloatRect wallBounds = wallCollider->GetBounds();
+            sf::FloatRect intersection;
+
+            if (playerBounds.intersects(wallBounds, intersection))
+            {
+                // Отталкиваем по Y
+                if (playerBounds.top < wallBounds.top)
+                    transform->MoveBy(0.f, -intersection.height);
+                else
+                    transform->MoveBy(0.f, intersection.height);
+            }
+        }
+
+        // --- Ограничение по границам уровня ---
         auto bounds = collider->GetBounds();
+        float levelLeft = 0.f;
+        float levelTop = 0.f;
+        float levelRight = 1280.f;
+        float levelBottom = 704.f;
 
-        if (bounds.left < 0) transform->MoveBy(-bounds.left, 0.f);
-        if (bounds.top < 0) transform->MoveBy(0.f, -bounds.top);
-        if (bounds.left + bounds.width > winSize.x) transform->MoveBy(-(bounds.left + bounds.width - winSize.x), 0.f);
-        if (bounds.top + bounds.height > winSize.y) transform->MoveBy(0.f, -(bounds.top + bounds.height - winSize.y));
+        if (bounds.left < levelLeft) transform->MoveBy(levelLeft - bounds.left, 0.f);
+        if (bounds.top < levelTop) transform->MoveBy(0.f, levelTop - bounds.top);
+        if (bounds.left + bounds.width > levelRight) transform->MoveBy(levelRight - (bounds.left + bounds.width), 0.f);
+        if (bounds.top + bounds.height > levelBottom) transform->MoveBy(0.f, levelBottom - (bounds.top + bounds.height));
     }
 
     void PhysicsSystem::Subscribe(ColliderComponent* collider)
@@ -184,9 +186,9 @@ namespace GameEngine
         const sf::FloatRect& intersection,
         float moveFactor)
     {
-        // простое разрешение коллизии
         if (intersection.width > intersection.height)
         {
+            // Коллизия по Y
             if (movingCollider->GetBounds().top < staticCollider->GetBounds().top)
                 movingTransform->MoveBy(0.f, -intersection.height * moveFactor);
             else
@@ -194,6 +196,7 @@ namespace GameEngine
         }
         else
         {
+            // Коллизия по X
             if (movingCollider->GetBounds().left < staticCollider->GetBounds().left)
                 movingTransform->MoveBy(-intersection.width * moveFactor, 0.f);
             else
