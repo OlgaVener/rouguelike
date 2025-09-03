@@ -116,6 +116,58 @@ namespace GameEngine
         }
     }
 
+
+    void PhysicsSystem::MoveWithCollision(RigidbodyComponent* rb, Vector2Df desiredMove)
+    {
+        if (!rb) return;
+        auto* transform = rb->GetGameObject()->GetComponent<TransformComponent>();
+        auto* collider = rb->GetGameObject()->GetComponent<ColliderComponent>();
+        if (!transform || !collider) return;
+
+        sf::FloatRect originalBounds = collider->GetBounds();
+        Vector2Df move = desiredMove;
+
+        // Проверяем столкновения со всеми коллайдерами
+        for (auto* otherCollider : colliders)
+        {
+            if (otherCollider == collider) continue;
+
+            auto* otherRigidbody = otherCollider->GetGameObject()->GetComponent<RigidbodyComponent>();
+            bool otherIsStatic = (otherRigidbody && otherRigidbody->GetKinematic());
+
+            if (!otherIsStatic) continue; // Сейчас проверяем только стены/статические объекты
+
+            sf::FloatRect intersection;
+            if (collider->GetBounds().intersects(otherCollider->GetBounds(), intersection))
+            {
+                // Простое разрешение коллизии по осям
+                if (intersection.width < intersection.height)
+                {
+                    desiredMove.x = (collider->GetBounds().left < otherCollider->GetBounds().left ? -intersection.width : intersection.width);
+                    desiredMove.y = 0.f;
+                }
+                else
+                {
+                    desiredMove.y = (collider->GetBounds().top < otherCollider->GetBounds().top ? -intersection.height : intersection.height);
+                    desiredMove.x = 0.f;
+                }
+            }
+        }
+
+        // Двигаем трансформ с учётом коллизий
+        transform->MoveBy(move);
+
+        // Ограничение выхода за границы окна
+        sf::RenderWindow& window = GameEngine::RenderSystem::Instance()->GetMainWindow();
+        sf::Vector2u winSize = window.getSize();
+        auto bounds = collider->GetBounds();
+
+        if (bounds.left < 0) transform->MoveBy(-bounds.left, 0.f);
+        if (bounds.top < 0) transform->MoveBy(0.f, -bounds.top);
+        if (bounds.left + bounds.width > winSize.x) transform->MoveBy(-(bounds.left + bounds.width - winSize.x), 0.f);
+        if (bounds.top + bounds.height > winSize.y) transform->MoveBy(0.f, -(bounds.top + bounds.height - winSize.y));
+    }
+
     void PhysicsSystem::Subscribe(ColliderComponent* collider)
     {
         colliders.push_back(collider);
