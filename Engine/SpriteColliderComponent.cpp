@@ -8,21 +8,13 @@ namespace GameEngine
 {
     SpriteColliderComponent::SpriteColliderComponent(GameObject* gameObject)
         : ColliderComponent(gameObject)
-    {
-    }
+    {}
 
     SpriteColliderComponent::~SpriteColliderComponent() {}
 
     void SpriteColliderComponent::Update(float deltaTime)
     {
-        auto spriteRenderer = gameObject->GetComponent<SpriteRendererComponent>();
-        auto transform = gameObject->GetComponent<TransformComponent>();
-
-        if (spriteRenderer && spriteRenderer->GetSprite() && transform)
-        {
-            const sf::Sprite* sprite = spriteRenderer->GetSprite();
-            bounds = sprite->getGlobalBounds();
-        }
+        // пусто или для отрисовки дебага
     }
 
     void SpriteColliderComponent::Render()
@@ -45,9 +37,18 @@ namespace GameEngine
 
         RenderSystem::Instance()->Render(rectangle);
     }
-
+   
     const sf::FloatRect& SpriteColliderComponent::GetBounds() const
     {
+        auto* spriteRenderer = gameObject->GetComponent<SpriteRendererComponent>();
+        if (!spriteRenderer || !spriteRenderer->GetSprite())
+        {
+            static sf::FloatRect empty;
+            return empty;
+        }
+
+        // mutable, чтобы можно было обновлять в const методе
+        bounds = spriteRenderer->GetSprite()->getGlobalBounds();
         return bounds;
     }
 }

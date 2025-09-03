@@ -17,10 +17,9 @@ namespace GameEngine
         void Update(float deltaTime) override;
         void Render() override;
 
-        // Реализация GetBounds
         const sf::FloatRect& GetBounds() const override;
 
     private:
-        sf::FloatRect bounds;
+        mutable sf::FloatRect bounds;
     };
 }
