@@ -17,17 +17,13 @@ LevelBuilder::~LevelBuilder() = default;
 void LevelBuilder::Start()
 {
     const float tileSize = 64.f;
-    int width = 20;    // 20 * 64 = 1280 (ровно по ширине)
-    int height = 11;   // 11 * 64 = 704 (больше 720, но уберем отступы)
+    int width = 20;
+    int height = 11;
 
-    // УБИРАЕМ отступы полностью - начинаем с самого верха!
     float startX = 0;
-    float startY = 0;  // Начинаем с самого верха, нижняя часть будет обрезана
+    float startY = 0;
 
-    const int topBottomWallTexture = 38;
-    const int sideWallTexture = 12;
-
-    // === 1. Заполняем пол ===
+    // === 1. Пол ===
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
             Vector2Df position(
@@ -38,55 +34,68 @@ void LevelBuilder::Start()
         }
     }
 
-    // === 2. Периметр стен ===
-    // Верхние стены
-    for (int x = 0; x < width; ++x) {
+    // === 2. Верхняя и нижняя линии (без углов) ===
+    for (int x = 1; x < width - 1; ++x) {
+        // верх
         walls.push_back(std::make_unique<Wall>(
-            Vector2Df(startX + x * tileSize + tileSize / 2, startY + tileSize / 2),
-            topBottomWallTexture
+            Vector2Df(startX + x * tileSize + tileSize / 2, startY + 0 * tileSize + tileSize / 2),
+            0 // top
         ));
-    }
-
-    // Нижние стены  
-    for (int x = 0; x < width; ++x) {
+        // низ
         walls.push_back(std::make_unique<Wall>(
             Vector2Df(startX + x * tileSize + tileSize / 2, startY + (height - 1) * tileSize + tileSize / 2),
-            topBottomWallTexture
+            1 // bottom
         ));
     }
 
-    // Боковые стены
+    // === 3. Левая и правая линии (без углов) ===
     for (int y = 1; y < height - 1; ++y) {
-        // Левая стена
+        // левая
         walls.push_back(std::make_unique<Wall>(
-            Vector2Df(startX + tileSize / 2, startY + y * tileSize + tileSize / 2),
-            sideWallTexture
+            Vector2Df(startX + 0 * tileSize + tileSize / 2, startY + y * tileSize + tileSize / 2),
+            2 // left
         ));
-
-        // Правая стена
+        // правая
         walls.push_back(std::make_unique<Wall>(
             Vector2Df(startX + (width - 1) * tileSize + tileSize / 2, startY + y * tileSize + tileSize / 2),
-            sideWallTexture
+            3 // right
         ));
     }
 
-    // === 3. Игрок в центре комнаты ===
+    // === 4. Углы ===
+    // создаём после всех стен, чтобы они были сверху
+    walls.push_back(std::make_unique<Wall>(
+        Vector2Df(startX + 0 * tileSize + tileSize / 2, startY + 0 * tileSize + tileSize / 2),
+        4 // top-left
+    ));
+    walls.push_back(std::make_unique<Wall>(
+        Vector2Df(startX + (width - 1) * tileSize + tileSize / 2, startY + 0 * tileSize + tileSize / 2),
+        5 // top-right
+    ));
+    walls.push_back(std::make_unique<Wall>(
+        Vector2Df(startX + 0 * tileSize + tileSize / 2, startY + (height - 1) * tileSize + tileSize / 2),
+        6 // bottom-left
+    ));
+    walls.push_back(std::make_unique<Wall>(
+        Vector2Df(startX + (width - 1) * tileSize + tileSize / 2, startY + (height - 1) * tileSize + tileSize / 2),
+        7 // bottom-right
+    ));
+
+    // === 5. Игрок в центре комнаты ===
     player = std::make_shared<RoguelikeGame::Player>();
     auto playerTransform = player->GetGameObject()->GetComponent<TransformComponent>();
+    playerTransform->SetWorldPosition(Vector2Df(
+        startX + (width * tileSize) / 2,
+        startY + (height * tileSize) / 2
+    ));
 
-    float playerX = startX + (width * tileSize) / 2;
-    float playerY = startY + (height * tileSize) / 2;
-
-    playerTransform->SetWorldPosition(Vector2Df(playerX, playerY));
-
-    // === 4. Враг ===
+    // === 6. Враг ===
     ai = std::make_shared<RoguelikeGame::EnemyAI>(
         Vector2Df(startX + tileSize * 2, startY + tileSize * 2),
         player->GetGameObject()
     );
 
-
-    // === 5. Аудио ===
+    // === 7. Аудио ===
     audio = std::make_unique<AudioEngine>(player->GetGameObject());
     InitializeAudio();
 }

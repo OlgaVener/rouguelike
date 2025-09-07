@@ -25,22 +25,38 @@ namespace RoguelikeGame
         transform->SetWorldPosition(position);
         transform->SetWorldScale(GameEngine::Vector2Df(1.f, 1.f));
 
-        // Спрайт
-        auto renderer = gameObject->AddComponent<GameEngine::SpriteRendererComponent>();
-        texture = new sf::Texture();
-        if (!texture->loadFromFile("Resources/Textures/walls.png"))
+        std::string texturePath;
+
+        switch (textureMapIndex)
         {
-            std::cout << "Wall texture not found, using fallback" << std::endl;
-            texture->create(64, 64);
+        case 0:  texturePath = "Resources/Textures/wall_top.png"; break;
+        case 1:  texturePath = "Resources/Textures/wall_bottom.png"; break;
+        case 2:  texturePath = "Resources/Textures/wall_left.png"; break;
+        case 3:  texturePath = "Resources/Textures/wall_right.png"; break;
+        case 4:  texturePath = "Resources/Textures/wall_corner_topleft.png"; break;
+        case 5:  texturePath = "Resources/Textures/wall_corner_topright.png"; break;
+        case 6:  texturePath = "Resources/Textures/wall_corner_bottomleft.png"; break;
+        case 7:  texturePath = "Resources/Textures/wall_corner_bottomright.png"; break;
+        default: texturePath = "Resources/Textures/wall_default.png"; break;
         }
+
+        // --- Проверка и вывод ---
+        std::cout << "[Wall] Loading texture: " << texturePath << std::endl;
+
+        texture = new sf::Texture();
+        if (!texture->loadFromFile(texturePath))
+        {
+            std::cerr << "[Wall] ERROR: Texture not found: " << texturePath << ", creating fallback 64x64" << std::endl;
+            texture->create(64, 64); // пустая текстура вместо файла
+        }
+
+        auto renderer = gameObject->AddComponent<GameEngine::SpriteRendererComponent>();
         renderer->SetTexture(texture);
         renderer->SetPixelSize(64, 64);
 
-        // Коллайдер
         auto collider = gameObject->AddComponent<GameEngine::SpriteColliderComponent>();
         GameEngine::PhysicsSystem::Instance()->Subscribe(collider);
 
-        // Rigidbody
         auto rigidbody = gameObject->AddComponent<GameEngine::RigidbodyComponent>();
         rigidbody->SetKinematic(true);
     }
